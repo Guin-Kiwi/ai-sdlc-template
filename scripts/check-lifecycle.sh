@@ -13,19 +13,13 @@ warn() {
   if [ -n "${GITHUB_ACTIONS:-}" ]; then echo "::warning::$1"; fi
 }
 
-for f in AGENTS.md LICENSE docs/INDEX.json docs/TASKS.md docs/PROJECT.md \
-         docs/STANDARDS.md docs/AGENT-GUIDANCE.md \
-         docs/specs/UC-TEMPLATE.md docs/adr/ADR-TEMPLATE.md \
-         .github/copilot-instructions.md; do
-  [ -f "$f" ] || fail "missing $f"
-done
-
 if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
   tracked=$(git ls-files | grep -E '(^|/)(\.venv|venv|__pycache__)/' || true)
   [ -z "$tracked" ] || fail "tracked environment/cache files: $(printf '%s\n' "$tracked" | head -3 | tr '\n' ' ')(remove with git rm -r --cached; see .gitignore)"
 fi
 
-python3 - <<'PY' || failures=$((failures + 1))
+PATH_CHECK_FAILED=0
+python3 - <<'PY' || PATH_CHECK_FAILED=1
 import json, os, sys
 try:
     index = json.load(open("docs/INDEX.json"))
@@ -34,6 +28,7 @@ except Exception as e:
     sys.exit(1)
 paths = []
 missing_skills = []
+template_only = index.get("template_only", [])
 for phase in index["phases"]:
     skill = phase["skill"]
     instructions = phase["instructions"]
@@ -42,7 +37,14 @@ for phase in index["phases"]:
         print(f"✗ missing {skill}SKILL.md")
         missing_skills.append(skill)
 paths += index["review_gated"]["paths"] + index["templates"]["paths"] + index["project"] + index["process"]
-missing = [p for p in paths if not os.path.exists(p)]
+missing = []
+for path in paths:
+    is_template_only = any(
+        path == exempt or (exempt.endswith("/") and path.startswith(exempt))
+        for exempt in template_only
+    )
+    if not is_template_only and not os.path.exists(path):
+        missing.append(path)
 for p in missing:
     print(f"✗ docs/INDEX.json references missing path {p}")
 for phase in index.get("phases", []):
@@ -54,6 +56,7 @@ for phase in index.get("phases", []):
             print(f"::warning::{message}")
 sys.exit(1 if missing or missing_skills else 0)
 PY
+failures=$((failures + PATH_CHECK_FAILED))
 
 phase=$(sed -n 's/^PHASE: *//p' docs/TASKS.md | head -1)
 status=$(sed -n 's/^STATUS: *//p' docs/TASKS.md | head -1)

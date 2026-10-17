@@ -243,6 +243,14 @@ d=$(make_fixture index-missing-path 0 ready "$UC_PLACEHOLDER" "$ACCEPT_PLACEHOLD
 rm "$d/scripts/sdlc.py"
 expect_fail "INDEX.json lists a review-gated path that is missing" "$d" "docs/INDEX.json references missing path scripts/sdlc.py"
 
+d=$(make_fixture index-template-only-path-missing 0 ready "$UC_PLACEHOLDER" "$ACCEPT_PLACEHOLDER" "$EVIDENCE_PLACEHOLDER")
+rm -rf "$d/MAINTAINING.md" "$d/docs/future" "$d/CITATION.cff" "$d/.zenodo.json"
+expect_pass "missing template-only paths are exempt" "$d"
+
+d=$(make_fixture index-non-template-path-missing 0 ready "$UC_PLACEHOLDER" "$ACCEPT_PLACEHOLDER" "$EVIDENCE_PLACEHOLDER")
+rm "$d/docs/WORKING-AGREEMENT.md"
+expect_fail "missing non-template-only paths fail" "$d" "docs/INDEX.json references missing path docs/WORKING-AGREEMENT.md"
+
 d=$(make_fixture index-missing-template 0 ready "$UC_PLACEHOLDER" "$ACCEPT_PLACEHOLDER" "$EVIDENCE_PLACEHOLDER")
 rm "$d/docs/adr/ADR-TEMPLATE.md"
 expect_fail "INDEX.json lists a template that is missing" "$d" "docs/INDEX.json references missing path docs/adr/ADR-TEMPLATE.md"
@@ -257,7 +265,7 @@ expect_fail "filled-in ADR template" "$d" "docs/adr/ADR-TEMPLATE.md looks filled
 
 d=$(make_fixture no-license 0 ready "$UC_PLACEHOLDER" "$ACCEPT_PLACEHOLDER" "$EVIDENCE_PLACEHOLDER")
 rm "$d/LICENSE"
-expect_fail "missing LICENSE (CC BY 4.0 attribution)" "$d" "missing LICENSE"
+expect_fail "missing LICENSE (CC BY 4.0 attribution)" "$d" "docs/INDEX.json references missing path LICENSE"
 
 d=$(make_fixture license-unchosen-after-bootstrap 1 in-progress "$UC_OK" "$ACCEPT_OK" "$EVIDENCE_OK")
 expect_warn "project licence not chosen after BOOTSTRAP" "$d" "LICENSE: the project licence is not chosen yet"

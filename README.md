@@ -26,8 +26,8 @@ what blocks a merge depends on the imported ruleset.
 
 | | Paths | Licence |
 |---|---|---|
-| **Your project** (what is being built) | `src/app/` (domain, application, interfaces, infrastructure), `tests/`, `docs/PROJECT.md`, `docs/TASKS.md`, `docs/WORKING-AGREEMENT.md`, `docs/specs/`, `docs/adr/`, `README.md` | Your team's choice (`LICENSE` section 2) |
-| **The AI-SDLC process** (how it is built) | `AGENTS.md`, `CONTRIBUTING.md`, `skills/`, `scripts/`, `.github/`, `environments/`, `docs/INDEX.json`, `docs/STANDARDS.md`, `docs/AGENT-GUIDANCE.md` | CC BY 4.0 (`LICENSE` section 1) |
+| **Your project** (what is being built) | <!-- BEGIN GENERATED PROJECT PATHS -->`src/`, `tests/`, `docs/PROJECT.md`, `docs/TASKS.md`, `docs/WORKING-AGREEMENT.md`, `docs/specs/`, `docs/adr/`, `README.md`, `LICENSE`<!-- END GENERATED PROJECT PATHS --> | Your team's choice (`LICENSE` section 2) |
+| **The AI-SDLC process** (how it is built) | <!-- BEGIN GENERATED PROCESS PATHS -->`AGENTS.md`, `CLAUDE.md`, `CONTRIBUTING.md`, `MAINTAINING.md`, `CITATION.cff`, `.zenodo.json`, `.devcontainer/`, `.vscode/`, `pytest.ini`, `docs/future/`, `.dockerignore`, `skills/`, `scripts/`, `docs/INDEX.json`, `docs/STANDARDS.md`, `docs/AGENT-GUIDANCE.md`, `.github/`, `environments/`<!-- END GENERATED PROCESS PATHS --> | CC BY 4.0 (`LICENSE` section 1) |
 
 Both stay in the repository: the process files are your evidence of TDD,
 CI/CD and supervised agent use. Deployable artifacts contain only the app

@@ -10,9 +10,17 @@ failures=0
 ok()   { echo "✓ $1"; }
 fail() { echo "✗ $1"; echo "    Fix: $2"; failures=$((failures + 1)); }
 
+bootstrap_skill=$(python3 - <<'PY'
+import json
+with open("docs/INDEX.json", encoding="utf-8") as fh:
+    index = json.load(fh)
+print(next(phase["skill"] for phase in index["phases"] if phase["phase"] == 0))
+PY
+)
+
 linked=0
 for dir in .agents .claude .cursor; do
-  if [ -f "$dir/skills/ai-sdlc-0-bootstrap/SKILL.md" ]; then
+  if [ -f "$dir/skills/${bootstrap_skill}SKILL.md" ]; then
     ok "$dir/skills resolves to the AI-SDLC skills"
     linked=1
   elif [ -e "$dir/skills" ] || [ -L "$dir/skills" ]; then
@@ -35,7 +43,14 @@ if [ -d environments/python ]; then
   fi
 fi
 
-for f in docs/INDEX.json docs/TASKS.md docs/PROJECT.md; do
+mapfile -t required_docs < <(python3 - <<'PY'
+import json
+with open("docs/INDEX.json", encoding="utf-8") as fh:
+  index = json.load(fh)
+print("\n".join(("docs/INDEX.json", index["lifecycle_state"], index["project_context"])))
+PY
+)
+for f in "${required_docs[@]}"; do
   [ -f "$f" ] && ok "$f present" || fail "$f missing" "restore it from the template"
 done
 

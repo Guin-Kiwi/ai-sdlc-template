@@ -10,11 +10,17 @@ BEGIN = "<!-- BEGIN GENERATED PHASE LIST -->"
 END = "<!-- END GENERATED PHASE LIST -->"
 CHANGE_TYPES_BEGIN = "<!-- BEGIN GENERATED CHANGE TYPES -->"
 CHANGE_TYPES_END = "<!-- END GENERATED CHANGE TYPES -->"
-VIEWS = (
-    pathlib.Path("README.md"),
-    pathlib.Path(".github/prompts/ai-sdlc.prompt.md"),
-    pathlib.Path("CONTRIBUTING.md"),
-)
+README_PROJECT_BEGIN = "<!-- BEGIN GENERATED PROJECT PATHS -->"
+README_PROJECT_END = "<!-- END GENERATED PROJECT PATHS -->"
+README_PROCESS_BEGIN = "<!-- BEGIN GENERATED PROCESS PATHS -->"
+README_PROCESS_END = "<!-- END GENERATED PROCESS PATHS -->"
+DOCKER_PROCESS_BEGIN = "# BEGIN GENERATED PROCESS PATHS"
+DOCKER_PROCESS_END = "# END GENERATED PROCESS PATHS"
+PATH_REGISTRY = {
+    (pathlib.Path("README.md"), README_PROJECT_BEGIN, README_PROJECT_END): ("project", "inline"),
+    (pathlib.Path("README.md"), README_PROCESS_BEGIN, README_PROCESS_END): ("process", "inline"),
+    (pathlib.Path(".dockerignore"), DOCKER_PROCESS_BEGIN, DOCKER_PROCESS_END): ("process", "docker"),
+}
 
 
 def read_index(root):
@@ -68,11 +74,15 @@ def generated_change_types(change_types):
     return "\n".join(lines)
 
 
-def replace_region(content, replacement, path):
-    begin_marker, end_marker = (
-        (CHANGE_TYPES_BEGIN, CHANGE_TYPES_END)
-        if path == pathlib.Path("CONTRIBUTING.md") else (BEGIN, END)
-    )
+def generated_inline_paths(paths):
+    return ", ".join(f"`{path}`" for path in paths)
+
+
+def generated_docker_paths(paths):
+    return "\n".join(paths)
+
+
+def replace_region(content, replacement, path, begin_marker, end_marker):
     begin_count = content.count(begin_marker)
     end_count = content.count(end_marker)
     if begin_count == 0 and end_count == 0:
@@ -95,27 +105,33 @@ def main():
 
     try:
         index = read_index(root)
-        expected_regions = {
-            path: (generated_change_types(index["change_types"])
-                   if path == pathlib.Path("CONTRIBUTING.md")
-                   else generated_text(path, index["phases"]))
-            for path in VIEWS
-        }
-        originals = {path: (root / path).read_text() for path in VIEWS}
-        replacements = {
-            path: replace_region(originals[path], expected_regions[path], path)
-            for path in VIEWS
-        }
-        stale = []
-        for relative_path in VIEWS:
-            if replacements[relative_path] is None:
-                continue
-            if originals[relative_path] != replacements[relative_path]:
-                stale.append(relative_path.as_posix())
-                if not args.check:
-                    (root / relative_path).write_text(replacements[relative_path])
+        targets = (
+            (pathlib.Path("README.md"), BEGIN, END, generated_text(pathlib.Path("README.md"), index["phases"])),
+            (pathlib.Path(".github/prompts/ai-sdlc.prompt.md"), BEGIN, END,
+             generated_text(pathlib.Path(".github/prompts/ai-sdlc.prompt.md"), index["phases"])),
+            (pathlib.Path("CONTRIBUTING.md"), CHANGE_TYPES_BEGIN, CHANGE_TYPES_END,
+             generated_change_types(index["change_types"])),
+            (pathlib.Path("README.md"), README_PROJECT_BEGIN, README_PROJECT_END, "project"),
+            (pathlib.Path("README.md"), README_PROCESS_BEGIN, README_PROCESS_END, "process"),
+            (pathlib.Path(".dockerignore"), DOCKER_PROCESS_BEGIN, DOCKER_PROCESS_END, "process"),
+        )
+        originals = {path: (root / path).read_text() for path in {target[0] for target in targets}}
+        replacements = dict(originals)
+        for path, begin_marker, end_marker, generated in targets:
+            registry_target = PATH_REGISTRY.get((path, begin_marker, end_marker))
+            if registry_target:
+                key, format_name = registry_target
+                generated = (generated_docker_paths(index[key]) if format_name == "docker"
+                             else generated_inline_paths(index[key]))
+            updated = replace_region(replacements[path], generated, path, begin_marker, end_marker)
+            if updated is not None:
+                replacements[path] = updated
+        stale = [path for path in originals if originals[path] != replacements[path]]
+        if not args.check:
+            for relative_path in stale:
+                (root / relative_path).write_text(replacements[relative_path])
         if args.check and stale:
-            print("Generated phase views are stale: " + ", ".join(stale), file=sys.stderr)
+            print("Generated views are stale: " + ", ".join(path.as_posix() for path in stale), file=sys.stderr)
             return 1
     except (OSError, ValueError) as error:
         print(error, file=sys.stderr)

@@ -25,6 +25,19 @@ def make_project(root):
     (root / "CONTRIBUTING.md").write_text(
         f"Before.\n{change_types_start}\nstale table\n{change_types_end}\nAfter.\n"
     )
+    readme_paths = (
+        "<!-- BEGIN GENERATED PROJECT PATHS -->stale project<!-- END GENERATED PROJECT PATHS -->"
+        " | "
+        "<!-- BEGIN GENERATED PROCESS PATHS -->stale process<!-- END GENERATED PROCESS PATHS -->"
+    )
+    current = (root / "README.md").read_text()
+    updated = current.replace("Before.\n", f"Before.\n{readme_paths}\n")
+    (root / "README.md").write_text(updated)
+    docker_begin = "# BEGIN GENERATED PROCESS PATHS"
+    docker_end = "# END GENERATED PROCESS PATHS"
+    (root / ".dockerignore").write_text(
+        f"keep-me\n{docker_begin}\nold process paths\n{docker_end}\nalso-keep-me\n"
+    )
 
 
 class GeneratePhaseViewsTests(unittest.TestCase):
@@ -204,6 +217,64 @@ class GeneratePhaseViewsTests(unittest.TestCase):
                     self.assertIn("`!` after any prefix", generated)
                 else:
                     self.assertIn(f"`{prefix}:`", generated)
+
+    def test_check_fails_when_readme_path_region_is_stale(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = pathlib.Path(tmp)
+            make_project(root)
+            self.run_generator(root)
+            readme = root / "README.md"
+            content = readme.read_text().replace("`docs/TASKS.md`", "stale TASKS path")
+            readme.write_text(content)
+            result = self.run_generator(root, "--check")
+
+        self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("README.md", result.stdout + result.stderr)
+
+    def test_check_fails_when_dockerignore_path_region_is_stale(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = pathlib.Path(tmp)
+            make_project(root)
+            self.run_generator(root)
+            dockerignore = root / ".dockerignore"
+            dockerignore.write_text(dockerignore.read_text().replace("docs", "stale-docs", 1))
+            result = self.run_generator(root, "--check")
+
+        self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn(".dockerignore", result.stdout + result.stderr)
+
+    def test_generation_renders_index_project_and_process_lists(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = pathlib.Path(tmp)
+            make_project(root)
+            result = self.run_generator(root)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            readme = (root / "README.md").read_text()
+            dockerignore = (root / ".dockerignore").read_text()
+            index = json.loads((root / "docs" / "INDEX.json").read_text())
+
+        for path in index["project"]:
+            self.assertIn(f"`{path}`", readme)
+        for path in index["process"]:
+            self.assertIn(path, readme)
+            self.assertIn(path, dockerignore)
+        self.assertIn("keep-me", dockerignore)
+        self.assertIn("also-keep-me", dockerignore)
+
+    def test_check_fails_when_dockerignore_or_readme_path_regions_are_stale(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = pathlib.Path(tmp)
+            make_project(root)
+            self.run_generator(root)
+            readme = root / "README.md"
+            dockerignore = root / ".dockerignore"
+            readme.write_text(readme.read_text().replace("`src/`", "stale-src", 1))
+            dockerignore.write_text(dockerignore.read_text().replace(".dockerignore", "stale", 1))
+            result = self.run_generator(root, "--check")
+
+        self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("README.md", result.stdout + result.stderr)
+        self.assertIn(".dockerignore", result.stdout + result.stderr)
 
 
 if __name__ == "__main__":
