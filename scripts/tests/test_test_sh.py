@@ -14,6 +14,9 @@ def make_project(tmp, test_body, python_flags=""):
     (root / "scripts" / "tests").mkdir(parents=True)
     shutil.copy(ROOT / "scripts" / "test.sh", root / "scripts" / "test.sh")
     shutil.copy(ROOT / "pytest.ini", root / "pytest.ini")
+    (root / "scripts" / "generate_phase_views.py").write_text(
+        "import sys\nraise SystemExit(0 if sys.argv[1:] == ['--check'] else 7)\n"
+    )
     for stub in ("check-lifecycle.sh", "test-lifecycle.sh"):
         (root / "scripts" / stub).write_text("exit 0\n")
     (root / "scripts" / "tests" / "test_stub.py").write_text(
@@ -34,6 +37,15 @@ def run_test_sh(root):
 
 
 class TestShTests(unittest.TestCase):
+    def test_stale_generated_phase_view_fails_the_run(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = make_project(tmp, "def test_this_passes():\n    assert 1 == 1\n")
+            generator = root / "scripts" / "generate_phase_views.py"
+            generator.write_text("import sys\nprint('generated views stale', file=sys.stderr)\nraise SystemExit(1)\n")
+            result = run_test_sh(root)
+        self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("generated views stale", result.stdout + result.stderr)
+
     def test_failing_pytest_style_test_fails_the_run(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = make_project(tmp, "def test_this_should_fail():\n    assert 1 == 2\n")

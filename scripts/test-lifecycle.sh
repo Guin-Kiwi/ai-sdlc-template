@@ -19,6 +19,15 @@ mkdir -p "$BASE_DIR"
 rsync -a --exclude '.git' --exclude '.venv' "$ROOT_DIR/" "$BASE_DIR/"
 printf '# PROJECT.md\n\nFixture project context.\n' > "$BASE_DIR/docs/PROJECT.md"
 cp "$BASE_DIR/docs/specs/UC-TEMPLATE.md" "$BASE_DIR/docs/specs/UC-900-FIXTURE.md"
+python3 - "$BASE_DIR/docs/INDEX.json" <<'PY'
+import json, sys
+path = sys.argv[1]
+index = json.load(open(path))
+tiers = ("large", "large", "large", "standard", "standard", "standard")
+for phase, tier in zip(index["phases"], tiers):
+  phase["model_tier"] = tier
+json.dump(index, open(path, "w"))
+PY
 
 write_tasks() {
   local dir="$1" phase="$2" status="$3" use_case="$4" acceptance="$5" evidence="$6"
@@ -175,15 +184,41 @@ sed -i 's/\[CHOOSE AT BOOTSTRAP\]/MIT/' "$d/LICENSE"
 expect_no_warnings "project licence chosen" "$d"
 
 d=$(make_fixture tiers-present 0 ready "$UC_PLACEHOLDER" "$ACCEPT_PLACEHOLDER" "$EVIDENCE_PLACEHOLDER")
-expect_no_warnings "every skill declares model_tier" "$d"
+expect_no_warnings "every phase declares model_tier" "$d"
 
 d=$(make_fixture tier-missing 0 ready "$UC_PLACEHOLDER" "$ACCEPT_PLACEHOLDER" "$EVIDENCE_PLACEHOLDER")
-sed -i '/"model_tier"/d' "$d/skills/ai-sdlc-3-develop/index.json"
-expect_warn "skill without model_tier" "$d" "skills/ai-sdlc-3-develop/index.json has no valid model_tier"
+python3 - "$d/docs/INDEX.json" <<'PY'
+import json, sys
+path = sys.argv[1]
+index = json.load(open(path))
+del index["phases"][3]["model_tier"]
+json.dump(index, open(path, "w"))
+PY
+expect_warn "phase without model_tier" "$d" "phase 3 has no valid model_tier"
 
 d=$(make_fixture tier-invalid 0 ready "$UC_PLACEHOLDER" "$ACCEPT_PLACEHOLDER" "$EVIDENCE_PLACEHOLDER")
-sed -i 's/"model_tier": "[a-z]*"/"model_tier": "huge"/' "$d/skills/ai-sdlc-3-develop/index.json"
-expect_warn "skill with invalid model_tier" "$d" "skills/ai-sdlc-3-develop/index.json has no valid model_tier"
+python3 - "$d/docs/INDEX.json" <<'PY'
+import json, sys
+path = sys.argv[1]
+index = json.load(open(path))
+index["phases"][3]["model_tier"] = "huge"
+json.dump(index, open(path, "w"))
+PY
+expect_warn "phase with invalid model_tier" "$d" "phase 3 has no valid model_tier"
+
+d=$(make_fixture skill-index-files-removed 0 ready "$UC_PLACEHOLDER" "$ACCEPT_PLACEHOLDER" "$EVIDENCE_PLACEHOLDER")
+find "$d/skills" -name index.json -delete
+expect_pass "skill metadata does not require per-skill index files" "$d"
+
+d=$(make_fixture phase-source-invalid 0 ready "$UC_PLACEHOLDER" "$ACCEPT_PLACEHOLDER" "$EVIDENCE_PLACEHOLDER")
+python3 - "$d/docs/INDEX.json" <<'PY'
+import json, sys
+path = sys.argv[1]
+index = json.load(open(path))
+index["phases"][3]["model_tier"] = "huge"
+json.dump(index, open(path, "w"))
+PY
+expect_warn "phase metadata remains authoritative without skill index files" "$d" "phase 3 has no valid model_tier"
 
 git_fixture() {
   local dir="$1"
