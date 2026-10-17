@@ -70,10 +70,23 @@ fi
 
 current_use_case=$(awk '/^## Current Use Case/{inside=1; next} inside && NF {gsub(/`/, ""); print; exit} /^## /{inside=0}' docs/TASKS.md)
 if [[ "$phase" =~ ^[1-5]$ ]]; then
-  if [[ -z "$current_use_case" || "$current_use_case" == *'UC-[NNN]-[NAME]'* || "$current_use_case" =~ ^Fast\ Track:[[:space:]]*$ ]]; then
-    fail "docs/TASKS.md must name a concrete current use case (or 'Fast Track: <description>') after BOOTSTRAP"
-  elif [[ "$current_use_case" =~ ^Fast\ Track: ]]; then
-    :
+  if [[ -z "$current_use_case" || "$current_use_case" == *'UC-[NNN]-[NAME]'* ]]; then
+    fail "docs/TASKS.md must name a concrete current use case or a known no-spec change type after BOOTSTRAP"
+  elif [[ "$current_use_case" =~ ^([[:alnum:]_-]+):[[:space:]]+(.+)$ ]]; then
+    entry_prefix="${BASH_REMATCH[1]}"
+    entry_description="${BASH_REMATCH[2]}"
+    needs_spec=$(python3 - "$entry_prefix" <<'PY'
+import json, sys
+with open("docs/INDEX.json", encoding="utf-8") as fh:
+  change_type = json.load(fh).get("change_types", {}).get(sys.argv[1])
+print("no" if change_type and change_type.get("needs_spec") is False else "yes")
+PY
+)
+    if [[ -z "${entry_description//[[:space:]]/}" || "$needs_spec" != "no" ]]; then
+      fail "docs/TASKS.md must name a concrete current use case or a known no-spec change type after BOOTSTRAP"
+    fi
+  elif [[ "$current_use_case" == *:* ]]; then
+    fail "docs/TASKS.md must name a concrete current use case or a known no-spec change type after BOOTSTRAP"
   elif [ ! -f "$current_use_case" ]; then
     fail "docs/TASKS.md current use case does not exist: $current_use_case"
   fi

@@ -18,7 +18,7 @@ Your agent does the work in phases, and you approve the results:
 BOOTSTRAP (once, to define the project), then SPECIFY → DESIGN → DEVELOP → VALIDATE → DEPLOY for each feature.
 <!-- END GENERATED PHASE LIST -->
 Each phase is a skill in `skills/` that the agent follows; `AGENTS.md` routes it
-there. Small fixes take a shorter Fast Track.
+there. See `docs/INDEX.json` for change types.
 Tests come first (TDD), CI checks every pull request, and only real breakage
 blocks a merge.
 
@@ -114,7 +114,7 @@ For non-interactive setup, pass the same selection, for example `bash scripts/se
 - `scripts/check-lifecycle.sh` — artefact consistency checks run by CI
 - `scripts/test.sh` — project test entrypoint run by CI and release;
   `scripts/test-lifecycle.sh` and `scripts/tests/` test the template's own checks
-- `scripts/pr_advisory.py` — non-blocking PR warnings (model tier, Fast Track scope)
+- `scripts/pr_advisory.py` — non-blocking PR warnings (model tier, high-judgement files)
 - `scripts/sdlc.py review` — optional human review report, recorded in history
 - `.vscode/tasks.json` — "AI-SDLC: Run checks" and "AI-SDLC: Human review report"
 - `.github/` — Copilot instructions and `/ai-sdlc` prompt, CODEOWNERS, PR and

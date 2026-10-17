@@ -35,13 +35,6 @@ DEPLOY → SPECIFY (feedback)
 
 ---
 
-## Fast Track
-
-- Small corrections only; no feature, API, data, security, dependency or architecture changes.
-- Record scope, reason, acceptance and checks in the existing UC or `docs/TASKS.md`.
-- Shorten SPECIFY; skip DESIGN with a reason. Scope grows → regular flow.
-- Keep required CI and review. Release/deployment still require authorization.
-
 ## Collaboration
 
 - Human-approved decisions → ADR; current architecture → `docs/PROJECT.md`.
@@ -58,7 +51,7 @@ Before making any change, load context in this order:
   need human review before editing; load this first.
 1. `docs/TASKS.md`
 2. `docs/PROJECT.md`
-3. `docs/specs/UC-[NNN]-[NAME].md` (or the eligible Fast Track task entry)
+3. `docs/specs/UC-[NNN]-[NAME].md` (unless its change type needs no spec)
 
 If these sources conflict:
 - `docs/TASKS.md` determines current execution priority/status
@@ -165,7 +158,7 @@ Agents should optimize for reviewability, not autonomy for its own sake.
 
 ## Git and review
 
-- Work on the current use case's or Fast Track's branch; commit to `main` only when a human allows it in this session (e.g. a solo repository).
+- Work on the current use case's branch; commit to `main` only when a human allows it in this session (e.g. a solo repository).
 - Never push, merge, force-push or delete branches unless a human asks in this session.
 - End every commit with `Agent-Model: <model>` and `Agent-Tier: small|standard|large`.
 - When a use case or conversation concludes, add once, without waiting: "Optional: run

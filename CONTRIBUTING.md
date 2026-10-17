@@ -24,17 +24,26 @@ Pick the lowest level that fits.
 | Level | What qualifies | Record it in |
 |---|---|---|
 | 1. Commit | A step inside already-scoped work: a test, an implementation step, a refactor | The commit, on the use case's branch |
-| 2. Fast Track | A small correction within existing behaviour: a bug fix (start with a failing test), wording, config, docs | One line in the PR description or `docs/TASKS.md` |
-| 3. Use case | Anything that adds or changes observable behaviour, i.e. something an acceptance criterion would describe | `docs/specs/UC-NNN-<NAME>.md` → branch → PR |
-| 4. ADR | A consequential decision that is hard to reverse or spans use cases: data store, auth approach, framework, a break in the layer rules | `docs/adr/ADR-NNN-<title>.md`, Proposed until a human accepts it, usually inside a use case's PR |
+| 2. Use case | Anything that adds or changes observable behaviour, i.e. something an acceptance criterion would describe | `docs/specs/UC-NNN-<NAME>.md` → branch → PR |
+| 3. ADR | A consequential decision that is hard to reverse or spans use cases: data store, auth approach, framework, a break in the layer rules | `docs/adr/ADR-NNN-<title>.md`, Proposed until a human accepts it, usually inside a use case's PR |
 
-Fast Track never covers new features, API or data changes, security,
-dependencies or architecture. If a Fast Track grows into any of these, stop
-and continue as a use case.
+If a teammate must agree on what the change should do first, it is `feat`; if
+they only need to check how it was done, it is `fix`, `refactor` or `docs`.
 
-Borderline? If a teammate would need to agree on *what* it should do before
-you build it, it is a use case. If they only need to check *how* you did it,
-it is Fast Track.
+## Change types
+
+<!-- BEGIN GENERATED CHANGE TYPES -->
+| Prefix | Meaning | Test | Workflow |
+|---|---|---|---|
+| `fix:` | Makes behaviour match an existing spec or decision. | Does a spec already say this is how it should behave? | Regression test first, then fix. |
+| `refactor:` | Changes structure, not behaviour. | Do all existing tests pass unchanged? | Tests unchanged and green; remove duplication. |
+| `docs:` | Changes wording, not meaning. | Would every rule, value and decision read the same afterwards? | Link check only. |
+| `test:` | Tooling and process, no product behaviour. | Does the app behave the same? | As fix; review closely if review-gated paths are touched. |
+| `ci:` | Tooling and process, no product behaviour. | Does the app behave the same? | As fix; review closely if review-gated paths are touched. |
+| `chore:` | Tooling and process, no product behaviour. | Does the app behave the same? | As fix; review closely if review-gated paths are touched. |
+| `feat:` | Adds behaviour or a new versioned ruleset, keeping existing decisions. | Does anything that already exists change meaning? | Spec, tests and code together in one change. |
+| `!` after any prefix | After any prefix, changes or removes a decision others depend on. | Does it supersede or retire anything? | Change record (supersedes, retires), ripple, code in the same change. |
+<!-- END GENERATED CHANGE TYPES -->
 
 ## Working with an agent
 
@@ -61,19 +70,19 @@ hint. For work outside a phase:
 | Work | Tier |
 |---|---|
 | ADRs: judgement and trade-offs | large |
-| Fast Track, single commits, docs, small refactors | small |
+| `fix`, `refactor`, `docs`, `test`, `ci`, `chore`; single commits | small |
 
 Switch models with the model picker under the chat box (Copilot) or `/model`
 (Claude Code).
 
 Start one tier lower than you think. If the same test still fails after two
 fix attempts, or the agent asks questions the spec already answers, move up a
-tier. Move down when a task turns out to be Fast Track.
+tier. Move down when the change type requires less judgement.
 
 ## Use cases, branches and pull requests
 
 - The agent creates the branch when SPECIFY starts: `uc-NNN-<short-name>`
-  for a use case, `fix-<short-name>` or `docs-<short-name>` for Fast Track.
+  for a use case.
 - Issues are optional. If you want the team to see planned work on GitHub,
   open a **Use case** issue first (**Issues → New issue → Use case**; your
   agent can draft the text) and give the agent its number: issue #42 →
@@ -100,8 +109,8 @@ Guides: [create an issue](https://docs.github.com/en/issues/tracking-your-work-w
 | Severity | Effect | Used for |
 |---|---|---|
 | Block | CI fails; the PR cannot merge | Real breakage: missing or inconsistent lifecycle files, a filled-in UC or ADR template, duplicate UC/ADR numbers, failing tests |
-| Warn | Yellow annotation on the PR; merging is allowed | A small-tier commit changed use cases, ADRs, `AGENTS.md`, `CONTRIBUTING.md`, workflows or rulesets; any agent commit changed a review-gated file (`docs/INDEX.json`); a Fast Track branch exceeded its scope; a phase lacks `model_tier` in `docs/INDEX.json` |
-| Info | Shown in the CI summary only | An agent commit without `Agent-Tier`; a large tier on a Fast Track branch |
+| Warn | Yellow annotation on the PR; merging is allowed | A small-tier commit changed use cases, ADRs, `AGENTS.md`, `CONTRIBUTING.md`, workflows or rulesets; any agent commit changed a review-gated file (`docs/INDEX.json`); a phase lacks `model_tier` in `docs/INDEX.json` |
+| Info | Shown in the CI summary only | An agent commit without `Agent-Tier` |
 
 Checks run on GitHub: the `structure` job blocks, the `advisory` job only
 informs.

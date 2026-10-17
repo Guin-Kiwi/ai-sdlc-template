@@ -60,19 +60,57 @@
       "docs/adr/ADR-",
       ".github/workflows/",
       ".github/rulesets/"
-    ],
-    "fast_track_excluded": [
-      "requirements",
-      "pyproject.toml",
-      ".github/workflows/",
-      ".github/rulesets/",
-      "docs/adr/"
-    ],
-    "fast_track_new_use_case_prefix": "docs/specs/UC-",
-    "fast_track_branch_prefixes": [
-      "fix-",
-      "docs-"
     ]
+  },
+  "change_types": {
+    "fix": {
+      "meaning": "Makes behaviour match an existing spec or decision.",
+      "test": "Does a spec already say this is how it should behave?",
+      "workflow": "Regression test first, then fix.",
+      "needs_spec": false
+    },
+    "refactor": {
+      "meaning": "Changes structure, not behaviour.",
+      "test": "Do all existing tests pass unchanged?",
+      "workflow": "Tests unchanged and green; remove duplication.",
+      "needs_spec": false
+    },
+    "docs": {
+      "meaning": "Changes wording, not meaning.",
+      "test": "Would every rule, value and decision read the same afterwards?",
+      "workflow": "Link check only.",
+      "needs_spec": false
+    },
+    "test": {
+      "meaning": "Tooling and process, no product behaviour.",
+      "test": "Does the app behave the same?",
+      "workflow": "As fix; review closely if review-gated paths are touched.",
+      "needs_spec": false
+    },
+    "ci": {
+      "meaning": "Tooling and process, no product behaviour.",
+      "test": "Does the app behave the same?",
+      "workflow": "As fix; review closely if review-gated paths are touched.",
+      "needs_spec": false
+    },
+    "chore": {
+      "meaning": "Tooling and process, no product behaviour.",
+      "test": "Does the app behave the same?",
+      "workflow": "As fix; review closely if review-gated paths are touched.",
+      "needs_spec": false
+    },
+    "feat": {
+      "meaning": "Adds behaviour or a new versioned ruleset, keeping existing decisions.",
+      "test": "Does anything that already exists change meaning?",
+      "workflow": "Spec, tests and code together in one change.",
+      "needs_spec": true
+    },
+    "BREAKING": {
+      "meaning": "After any prefix, changes or removes a decision others depend on.",
+      "test": "Does it supersede or retire anything?",
+      "workflow": "Change record (supersedes, retires), ripple, code in the same change.",
+      "needs_spec": true
+    }
   },
   "templates": {
     "rule": "Copy to a new numbered file; never fill in the template itself.",

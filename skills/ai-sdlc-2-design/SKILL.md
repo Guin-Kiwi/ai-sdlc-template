@@ -12,7 +12,7 @@ description: Determine minimal architecture components for the current use case.
 - Record status, context, alternatives, decision and consequences.
 - Human acceptance → update `PROJECT.md` and propose durable rules in `AGENTS.md`.
 - Preserve superseded ADRs; review related changes together.
-- Fast Track → confirm existing architecture in the task entry; skip full DESIGN.
+- Changes whose type needs no spec skip SPECIFY and DESIGN; see the change types in `docs/INDEX.json`.
 
 ## Goal
 

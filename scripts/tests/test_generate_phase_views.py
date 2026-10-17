@@ -20,6 +20,11 @@ def make_project(root):
     (root / ".github" / "prompts" / "ai-sdlc.prompt.md").write_text(
         f"Before.\n{start}\nstale prompt text\n{end}\nAfter.\n"
     )
+    change_types_start = "<!-- BEGIN GENERATED CHANGE TYPES -->"
+    change_types_end = "<!-- END GENERATED CHANGE TYPES -->"
+    (root / "CONTRIBUTING.md").write_text(
+        f"Before.\n{change_types_start}\nstale table\n{change_types_end}\nAfter.\n"
+    )
 
 
 class GeneratePhaseViewsTests(unittest.TestCase):
@@ -108,6 +113,63 @@ class GeneratePhaseViewsTests(unittest.TestCase):
         self.assertIn("DISCOVER", readme)
         self.assertIn("discover", prompt)
         self.assertNotIn("specify", prompt)
+
+    def test_check_fails_when_contributing_change_type_table_is_stale(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = pathlib.Path(tmp)
+            make_project(root)
+            index_path = root / "docs" / "INDEX.json"
+            index = json.loads(index_path.read_text())
+            index["change_types"] = {"fix": {
+                "meaning": "custom correction",
+                "test": "a test description",
+                "workflow": "a workflow description",
+                "needs_spec": False,
+            }, "BREAKING": {
+                "meaning": "breaking decision",
+                "test": "supersedes test",
+                "workflow": "record, ripple, code",
+                "needs_spec": True,
+            }}
+            index_path.write_text(json.dumps(index))
+            generated = self.run_generator(root)
+            self.assertEqual(generated.returncode, 0, generated.stdout + generated.stderr)
+            contributing = root / "CONTRIBUTING.md"
+            contributing.write_text(contributing.read_text().replace("custom correction", "stale correction", 1))
+            result = self.run_generator(root, "--check")
+
+        self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("CONTRIBUTING.md", result.stdout + result.stderr)
+
+    def test_generation_renders_change_types_from_index(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = pathlib.Path(tmp)
+            make_project(root)
+            index_path = root / "docs" / "INDEX.json"
+            index = json.loads(index_path.read_text())
+            index["change_types"] = {"fix": {
+                "meaning": "custom correction",
+                "test": "a test description",
+                "workflow": "a workflow description",
+                "needs_spec": False,
+            }, "BREAKING": {
+                "meaning": "breaking decision",
+                "test": "supersedes test",
+                "workflow": "record, ripple, code",
+                "needs_spec": True,
+            }}
+            index_path.write_text(json.dumps(index))
+
+            result = self.run_generator(root)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            contributing = root / "CONTRIBUTING.md"
+            generated = contributing.read_text()
+
+        self.assertIn("custom correction", generated)
+        self.assertIn("a test description", generated)
+        self.assertIn("a workflow description", generated)
+        self.assertIn("`!` after any prefix", generated)
+        self.assertNotIn("stale table", generated)
 
 
 if __name__ == "__main__":

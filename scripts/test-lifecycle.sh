@@ -124,11 +124,17 @@ expect_pass "VALIDATE state with a concrete use case" "$d"
 d=$(make_fixture placeholder-use-case 1 in-progress "$UC_PLACEHOLDER" "$ACCEPT_OK" "$EVIDENCE_OK")
 expect_fail "placeholder current use case after BOOTSTRAP" "$d" "must name a concrete current use case"
 
-d=$(make_fixture fast-track-entry 3 in-progress 'Fast Track: fix typo in login message' "$ACCEPT_OK" "$EVIDENCE_OK")
-expect_pass "Fast Track entry instead of a use case after BOOTSTRAP" "$d"
+d=$(make_fixture no-spec-change-type 3 in-progress 'docs: clarify instructions' "$ACCEPT_OK" "$EVIDENCE_OK")
+sed -i 's/PHASE: 0/PHASE: 3/' "$d/docs/TASKS.md"
+expect_pass "known no-spec change-type entry after BOOTSTRAP" "$d"
 
-d=$(make_fixture fast-track-empty 3 in-progress 'Fast Track:' "$ACCEPT_OK" "$EVIDENCE_OK")
-expect_fail "Fast Track entry without a description" "$d" "must name a concrete current use case"
+d=$(make_fixture unknown-change-type 3 in-progress 'unknown: clarify instructions' "$ACCEPT_OK" "$EVIDENCE_OK")
+sed -i 's/PHASE: 0/PHASE: 3/' "$d/docs/TASKS.md"
+expect_fail "unknown no-spec change type after BOOTSTRAP" "$d" "must name a concrete current use case or a known no-spec change type"
+
+d=$(make_fixture change-type-needs-spec 3 in-progress 'feat: add a capability' "$ACCEPT_OK" "$EVIDENCE_OK")
+sed -i 's/PHASE: 0/PHASE: 3/' "$d/docs/TASKS.md"
+expect_fail "change type requiring a spec cannot replace a use case" "$d" "must name a concrete current use case"
 
 d=$(make_fixture missing-use-case 1 in-progress 'docs/specs/UC-999-MISSING.md' "$ACCEPT_OK" "$EVIDENCE_OK")
 expect_fail "missing current use case file" "$d" "current use case does not exist"

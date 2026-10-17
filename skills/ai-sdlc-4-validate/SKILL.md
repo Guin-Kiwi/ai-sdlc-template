@@ -5,11 +5,7 @@ description: Verify repository readiness for release.
 
 # PHASE 4 — VALIDATE
 
-## Fast Track
-
-Run planned checks; record results, omitted checks with reasons, and phase 4.
-Skip the release-readiness checklist below; do not claim full release readiness.
-Required CI/review remain; no incidental release or deployment.
+Changes whose type needs no spec skip SPECIFY and DESIGN; see the change types in `docs/INDEX.json`.
 
 ## Goal
 

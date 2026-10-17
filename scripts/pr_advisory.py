@@ -55,27 +55,13 @@ def load_advisory_rules(root="."):
     try:
         with open(os.path.join(root, "docs", "INDEX.json"), encoding="utf-8") as fh:
             config = json.load(fh)["pr_advisory"]
-            return {
-                "high_judgement": list(config["high_judgement"]),
-                "fast_track_excluded": list(config["fast_track_excluded"]),
-                "fast_track_new_use_case_prefix": config["fast_track_new_use_case_prefix"],
-                "fast_track_branch_prefixes": tuple(config["fast_track_branch_prefixes"]),
-            }
+            return {"high_judgement": list(config["high_judgement"])}
     except (OSError, KeyError, ValueError, TypeError):
-        return {
-            "high_judgement": (),
-            "fast_track_excluded": (),
-            "fast_track_new_use_case_prefix": "",
-            "fast_track_branch_prefixes": (),
-        }
+        return {"high_judgement": ()}
 
 
 def _matches(path, prefixes):
     return any(path == p or path.startswith(p) for p in prefixes)
-
-
-def _is_fast_track(branch, prefixes):
-    return branch.startswith(tuple(prefixes))
 
 
 def _review_after(commits, index):
@@ -98,21 +84,10 @@ def _flag(findings, commits, index, text):
                                     "record a review with `python3 scripts/sdlc.py review`."))
 
 
-def advise(commits, changed, branch, gated=(), high_judgement=None,
-           fast_track_excluded=None, fast_track_new_use_case_prefix=None,
-           fast_track_branch_prefixes=None, root="."):
+def advise(commits, changed, branch, gated=(), high_judgement=None, root="."):
     """commits are oldest first."""
     rules = load_advisory_rules(root)
     high_judgement = rules["high_judgement"] if high_judgement is None else high_judgement
-    fast_track_excluded = rules["fast_track_excluded"] if fast_track_excluded is None else fast_track_excluded
-    fast_track_new_use_case_prefix = (
-        rules["fast_track_new_use_case_prefix"]
-        if fast_track_new_use_case_prefix is None else fast_track_new_use_case_prefix
-    )
-    fast_track_branch_prefixes = (
-        rules["fast_track_branch_prefixes"]
-        if fast_track_branch_prefixes is None else fast_track_branch_prefixes
-    )
     findings = []
 
     for i, c in enumerate(commits):
@@ -134,26 +109,6 @@ def advise(commits, changed, branch, gated=(), high_judgement=None,
                 "notice",
                 f"Commit {short} looks agent-written but has no Agent-Tier trailer; "
                 "model tier unknown.",
-            ))
-
-    if _is_fast_track(branch, fast_track_branch_prefixes):
-        excluded = [
-            path for status, path in changed
-            if _matches(path, fast_track_excluded)
-            or (status == "A" and path.startswith(fast_track_new_use_case_prefix))
-        ]
-        if excluded:
-            findings.append((
-                "warning",
-                f"Fast Track scope exceeded on '{branch}': {', '.join(excluded)}. "
-                "Fast Track excludes dependencies, workflows, ADRs and new use cases; "
-                "open a use-case issue (CONTRIBUTING.md).",
-            ))
-        if any(tier_of(c["message"]) == "large" for c in commits):
-            findings.append((
-                "notice",
-                "A large model was used on a Fast Track branch; a smaller tier is "
-                "usually enough here.",
             ))
 
     return findings

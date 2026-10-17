@@ -5,11 +5,7 @@ description: Implement the current use case using strict TDD.
 
 # PHASE 3 — DEVELOP
 
-## Fast Track
-
-Replace the full test sequence with a regression test before the fix.
-Documentation only → check content and links, no code tests.
-Use the UC/task entry; record actual results and phase 3.
+Changes whose type needs no spec skip SPECIFY and DESIGN; see the change types in `docs/INDEX.json`.
 
 ## Goal
 
