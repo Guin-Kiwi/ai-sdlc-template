@@ -52,6 +52,28 @@
     "rule": "Edit only with a human's explicit approval; changes need a code owner's review (.github/CODEOWNERS).",
     "paths": ["AGENTS.md", "LICENSE", "docs/INDEX.json", "CONTRIBUTING.md", "CITATION.cff", ".zenodo.json", "CLAUDE.md", ".github/CODEOWNERS", ".github/workflows/", ".github/rulesets/", "scripts/sdlc.py"]
   },
+  "pr_advisory": {
+    "high_judgement": [
+      "AGENTS.md",
+      "CONTRIBUTING.md",
+      "docs/specs/UC-",
+      "docs/adr/ADR-",
+      ".github/workflows/",
+      ".github/rulesets/"
+    ],
+    "fast_track_excluded": [
+      "requirements",
+      "pyproject.toml",
+      ".github/workflows/",
+      ".github/rulesets/",
+      "docs/adr/"
+    ],
+    "fast_track_new_use_case_prefix": "docs/specs/UC-",
+    "fast_track_branch_prefixes": [
+      "fix-",
+      "docs-"
+    ]
+  },
   "templates": {
     "rule": "Copy to a new numbered file; never fill in the template itself.",
     "paths": ["docs/specs/UC-TEMPLATE.md", "docs/adr/ADR-TEMPLATE.md"]

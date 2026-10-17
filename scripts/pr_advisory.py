@@ -12,23 +12,6 @@ import sys
 
 TIERS = ("small", "standard", "large")
 
-HIGH_JUDGEMENT = (
-    "AGENTS.md",
-    "CONTRIBUTING.md",
-    "docs/specs/UC-",
-    "docs/adr/ADR-",
-    ".github/workflows/",
-    ".github/rulesets/",
-)
-
-FAST_TRACK_EXCLUDED = (
-    "requirements",
-    "pyproject.toml",
-    ".github/workflows/",
-    ".github/rulesets/",
-    "docs/adr/",
-)
-
 AGENT_CO_AUTHOR = re.compile(
     r"^co-authored-by:.*\b(claude|copilot|codex|gpt|gemini|cursor|agent)\b",
     re.IGNORECASE | re.MULTILINE,
@@ -62,18 +45,37 @@ def reviewer_of(message):
 
 def load_gated(root="."):
     try:
-        with open(os.path.join(root, "docs", "INDEX.json")) as fh:
+        with open(os.path.join(root, "docs", "INDEX.json"), encoding="utf-8") as fh:
             return list(json.load(fh)["review_gated"]["paths"])
     except (OSError, KeyError, ValueError):
         return []
+
+
+def load_advisory_rules(root="."):
+    try:
+        with open(os.path.join(root, "docs", "INDEX.json"), encoding="utf-8") as fh:
+            config = json.load(fh)["pr_advisory"]
+            return {
+                "high_judgement": list(config["high_judgement"]),
+                "fast_track_excluded": list(config["fast_track_excluded"]),
+                "fast_track_new_use_case_prefix": config["fast_track_new_use_case_prefix"],
+                "fast_track_branch_prefixes": tuple(config["fast_track_branch_prefixes"]),
+            }
+    except (OSError, KeyError, ValueError, TypeError):
+        return {
+            "high_judgement": (),
+            "fast_track_excluded": (),
+            "fast_track_new_use_case_prefix": "",
+            "fast_track_branch_prefixes": (),
+        }
 
 
 def _matches(path, prefixes):
     return any(path == p or path.startswith(p) for p in prefixes)
 
 
-def _is_fast_track(branch):
-    return branch.startswith(("fix-", "docs-"))
+def _is_fast_track(branch, prefixes):
+    return branch.startswith(tuple(prefixes))
 
 
 def _review_after(commits, index):
@@ -96,15 +98,28 @@ def _flag(findings, commits, index, text):
                                     "record a review with `python3 scripts/sdlc.py review`."))
 
 
-def advise(commits, changed, branch, gated=()):
+def advise(commits, changed, branch, gated=(), high_judgement=None,
+           fast_track_excluded=None, fast_track_new_use_case_prefix=None,
+           fast_track_branch_prefixes=None, root="."):
     """commits are oldest first."""
+    rules = load_advisory_rules(root)
+    high_judgement = rules["high_judgement"] if high_judgement is None else high_judgement
+    fast_track_excluded = rules["fast_track_excluded"] if fast_track_excluded is None else fast_track_excluded
+    fast_track_new_use_case_prefix = (
+        rules["fast_track_new_use_case_prefix"]
+        if fast_track_new_use_case_prefix is None else fast_track_new_use_case_prefix
+    )
+    fast_track_branch_prefixes = (
+        rules["fast_track_branch_prefixes"]
+        if fast_track_branch_prefixes is None else fast_track_branch_prefixes
+    )
     findings = []
 
     for i, c in enumerate(commits):
         short = c["sha"][:7]
         tier = tier_of(c["message"])
         agent = is_agent_commit(c["message"])
-        risky = [f for f in c["files"] if _matches(f, HIGH_JUDGEMENT)] if tier == "small" else []
+        risky = [f for f in c["files"] if _matches(f, high_judgement)] if tier == "small" else []
         gated_files = [f for f in c["files"] if _matches(f, gated)] if agent else []
         if risky:
             _flag(findings, commits, i,
@@ -121,11 +136,11 @@ def advise(commits, changed, branch, gated=()):
                 "model tier unknown.",
             ))
 
-    if _is_fast_track(branch):
+    if _is_fast_track(branch, fast_track_branch_prefixes):
         excluded = [
             path for status, path in changed
-            if _matches(path, FAST_TRACK_EXCLUDED)
-            or (status == "A" and path.startswith("docs/specs/UC-"))
+            if _matches(path, fast_track_excluded)
+            or (status == "A" and path.startswith(fast_track_new_use_case_prefix))
         ]
         if excluded:
             findings.append((
@@ -189,7 +204,7 @@ def main(argv):
         return 0
     _, base, head, branch = argv
     commits, changed = collect(base, head)
-    report(advise(commits, changed, branch, gated=load_gated()))
+    report(advise(commits, changed, branch, gated=load_gated(), root="."))
     return 0
 
 

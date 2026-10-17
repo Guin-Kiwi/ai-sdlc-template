@@ -1,3 +1,4 @@
+import json
 import os
 import subprocess
 import sys
@@ -58,6 +59,34 @@ class AdviseTests(unittest.TestCase):
         self.assertIn("review thoroughly", text)
         self.assertIn("docs/specs/UC-042-LOGIN.md", text)
 
+    def test_high_judgement_paths_loaded_from_index_change_findings(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            os.makedirs(os.path.join(tmp, "docs"))
+            write(os.path.join(tmp, "docs", "INDEX.json"), json.dumps({
+                "pr_advisory": {
+                    "high_judgement": ["docs/custom/"],
+                    "fast_track_excluded": [],
+                    "fast_track_new_use_case_prefix": "new-specs/UC-",
+                    "fast_track_branch_prefixes": []
+                }
+            }))
+            findings = pa.advise(
+                [commit("docs: x\n\nAgent-Tier: small\n", ["docs/custom/rules.md"])],
+                [],
+                "uc-042-test",
+                root=tmp,
+            )
+            ignored_findings = pa.advise(
+                [commit("docs: x\n\nAgent-Tier: small\n", ["docs/specs/UC-042-LOGIN.md"])],
+                [],
+                "uc-042-test",
+                root=tmp,
+            )
+
+        self.assertEqual(len(findings), 1)
+        self.assertIn("docs/custom/rules.md", findings[0][1])
+        self.assertEqual(ignored_findings, [])
+
     def test_standard_tier_on_high_judgement_file_is_fine(self):
         findings = pa.advise(
             [commit("docs: adr\n\nAgent-Tier: standard\n", ["docs/adr/ADR-003-db.md"])],
@@ -84,6 +113,53 @@ class AdviseTests(unittest.TestCase):
         self.assertEqual([level for level, _ in findings], ["warning"])
         self.assertIn("Fast Track scope exceeded", findings[0][1])
         self.assertIn("requirements.txt", findings[0][1])
+
+    def test_fast_track_exclusions_and_branch_prefixes_load_from_index(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            os.makedirs(os.path.join(tmp, "docs"))
+            write(os.path.join(tmp, "docs", "INDEX.json"), json.dumps({
+                "pr_advisory": {
+                    "high_judgement": [],
+                    "fast_track_excluded": ["custom-deps/"],
+                    "fast_track_new_use_case_prefix": "custom-specs/UC-",
+                    "fast_track_branch_prefixes": ["quick-"]
+                }
+            }))
+            findings = pa.advise(
+                [commit("fix: x\n\nAgent-Tier: none\n", ["custom-deps/lib.txt"])],
+                [("M", "custom-deps/lib.txt")],
+                "quick-cleanup",
+                root=tmp,
+            )
+            ordinary_branch_findings = pa.advise(
+                [commit("fix: x\n\nAgent-Tier: none\n", ["custom-deps/lib.txt"])],
+                [("M", "custom-deps/lib.txt")],
+                "fix-cleanup",
+                root=tmp,
+            )
+
+        self.assertIn("Fast Track scope exceeded", findings[0][1])
+        self.assertEqual(ordinary_branch_findings, [])
+
+    def test_new_use_case_prefix_loads_from_index(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            os.makedirs(os.path.join(tmp, "docs"))
+            write(os.path.join(tmp, "docs", "INDEX.json"), json.dumps({
+                "pr_advisory": {
+                    "high_judgement": [],
+                    "fast_track_excluded": [],
+                    "fast_track_new_use_case_prefix": "custom-specs/UC-",
+                    "fast_track_branch_prefixes": ["quick-"]
+                }
+            }))
+            findings = pa.advise(
+                [commit("docs: uc\n\nAgent-Tier: none\n", ["custom-specs/UC-050-X.md"])],
+                [("A", "custom-specs/UC-050-X.md")],
+                "quick-work",
+                root=tmp,
+            )
+
+        self.assertIn("Fast Track scope exceeded", findings[0][1])
 
     def test_fast_track_adding_use_case_warns(self):
         findings = pa.advise(
@@ -180,6 +256,32 @@ class ReviewGatedTests(unittest.TestCase):
                   '{"review_gated": {"rule": "r", "paths": ["AGENTS.md", ".github/rulesets/"]}}')
             self.assertEqual(pa.load_gated(tmp), ["AGENTS.md", ".github/rulesets/"])
             self.assertEqual(pa.load_gated(os.path.join(tmp, "missing")), [])
+
+    def test_loads_all_advisory_rules_from_index(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            os.makedirs(os.path.join(tmp, "docs"))
+            write(os.path.join(tmp, "docs", "INDEX.json"), json.dumps({
+                "pr_advisory": {
+                    "high_judgement": ["docs/custom/"],
+                    "fast_track_excluded": ["vendor/"],
+                    "fast_track_new_use_case_prefix": "custom-specs/UC-",
+                    "fast_track_branch_prefixes": ["quick-"]
+                }
+            }))
+            rules = pa.load_advisory_rules(tmp)
+
+        self.assertEqual(rules["high_judgement"], ["docs/custom/"])
+        self.assertEqual(rules["fast_track_excluded"], ["vendor/"])
+        self.assertEqual(rules["fast_track_new_use_case_prefix"], "custom-specs/UC-")
+        self.assertEqual(rules["fast_track_branch_prefixes"], ("quick-",))
+
+    def test_missing_advisory_rules_default_to_empty(self):
+        self.assertEqual(pa.load_advisory_rules("missing-root"), {
+            "high_judgement": (),
+            "fast_track_excluded": (),
+            "fast_track_new_use_case_prefix": "",
+            "fast_track_branch_prefixes": (),
+        })
 
 
 class GitIntegrationTests(unittest.TestCase):
