@@ -9,6 +9,8 @@ done or blocked. Set in-progress on entry, done only after the phase output is
 verified, or blocked with a reason. Keep PHASE on completion; an explicitly
 selected next phase starts as ready. Changes to this router require human review.
 
+If `MAINTAINING.md` exists, this repository is the template itself: also follow `MAINTAINING.md`.
+
 ---
 
 This repository is an **AI-assisted SDLC template**.

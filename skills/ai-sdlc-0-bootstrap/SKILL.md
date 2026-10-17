@@ -116,7 +116,7 @@ Identify:
   BOOTSTRAP" instruction line, README's template setup/"Create a project"
   steps) — replace with the real project's own content instead of removing
   the file
-- template identity: README badges (AI-SDLC, DOI, arXiv), `CITATION.cff`,
+- template identity: README badges (AI-SDLC, DOI, arXiv), `MAINTAINING.md`, `CITATION.cff`,
   `.zenodo.json` and the owner in `.github/CODEOWNERS` describe the template,
   not the derived project — replace or remove them for the project
 - `docs/future/`: roadmap notes for the template itself, not the project —

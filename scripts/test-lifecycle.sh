@@ -110,6 +110,14 @@ expect_fail() {
 d=$(make_fixture bootstrap 0 ready "$UC_PLACEHOLDER" "$ACCEPT_PLACEHOLDER" "$EVIDENCE_PLACEHOLDER")
 expect_pass "BOOTSTRAP state with template placeholders" "$d"
 
+d=$(make_fixture template-maintenance-guidance 0 ready "$UC_PLACEHOLDER" "$ACCEPT_PLACEHOLDER" "$EVIDENCE_PLACEHOLDER")
+printf '# Template maintenance\n' > "$d/MAINTAINING.md"
+expect_pass "template maintenance guidance present" "$d"
+
+d=$(make_fixture derived-project-without-maintenance-guidance 0 ready "$UC_PLACEHOLDER" "$ACCEPT_PLACEHOLDER" "$EVIDENCE_PLACEHOLDER")
+rm -f "$d/MAINTAINING.md"
+expect_pass "derived project without template maintenance guidance" "$d"
+
 d=$(make_fixture valid-validate 4 in-progress "$UC_OK" "$ACCEPT_OK" "$EVIDENCE_OK")
 expect_pass "VALIDATE state with a concrete use case" "$d"
 
