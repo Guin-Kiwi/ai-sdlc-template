@@ -279,6 +279,22 @@ class GeneratePhaseViewsTests(unittest.TestCase):
         self.assertIn("README.md", result.stdout + result.stderr)
         self.assertIn(".dockerignore", result.stdout + result.stderr)
 
+    def test_readme_table_rows_stay_on_one_line_after_generation(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = pathlib.Path(tmp)
+            make_project(root)
+            (root / "README.md").write_text((ROOT / "README.md").read_text())
+            result = self.run_generator(root)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            readme = (root / "README.md").read_text()
+
+        rows = [line for line in readme.splitlines() if line.startswith("|")]
+        self.assertTrue(rows, "README has no table rows")
+        for row in rows:
+            self.assertTrue(row.endswith("|"), f"table row is split across lines: {row!r}")
+        self.assertIn("`src/`", readme)
+        self.assertIn("`AGENTS.md`", readme)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -99,10 +99,13 @@ def replace_region(content, replacement, path, begin_marker, end_marker):
         return None
     if begin_count != 1 or end_count != 1:
         raise ValueError(f"{path}: expected exactly one generated-region marker pair")
-    start = content.index(begin_marker) + len(begin_marker)
+    begin_index = content.index(begin_marker)
     finish = content.index(end_marker)
-    if content.index(begin_marker) > content.index(end_marker):
+    if begin_index > finish:
         raise ValueError(f"{path}: generated-region markers are out of order")
+    start = begin_index + len(begin_marker)
+    if "\n" not in content[begin_index:finish]:
+        return content[:start] + replacement + content[finish:]
     return content[:start] + "\n" + replacement + "\n" + content[finish:]
 
 
