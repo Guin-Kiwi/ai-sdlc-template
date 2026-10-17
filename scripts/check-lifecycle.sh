@@ -68,6 +68,10 @@ if [[ "$phase" =~ ^[1-5]$ ]] && grep -q 'TBD' docs/PROJECT.md; then
   fail "docs/PROJECT.md still contains TBD after BOOTSTRAP (PHASE $phase)"
 fi
 
+if [[ "$phase" =~ ^[1-5]$ ]] && grep -Eq '^\|[^|]+\|[[:space:]]*TBD([[:space:]]*<[^>]+>)?[[:space:]]*\|' docs/WORKING-AGREEMENT.md; then
+  fail "docs/WORKING-AGREEMENT.md has TBD values after BOOTSTRAP"
+fi
+
 current_use_case=$(awk '/^## Current Use Case/{inside=1; next} inside && NF {gsub(/`/, ""); print; exit} /^## /{inside=0}' docs/TASKS.md)
 if [[ "$phase" =~ ^[1-5]$ ]]; then
   if [[ -z "$current_use_case" || "$current_use_case" == *'UC-[NNN]-[NAME]'* ]]; then

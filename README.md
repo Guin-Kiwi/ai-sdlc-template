@@ -19,14 +19,14 @@ BOOTSTRAP (once, to define the project), then SPECIFY → DESIGN → DEVELOP →
 <!-- END GENERATED PHASE LIST -->
 Each phase is a skill in `skills/` that the agent follows; `AGENTS.md` routes it
 there. See `docs/INDEX.json` for change types.
-Tests come first (TDD), CI checks every pull request, and only real breakage
-blocks a merge.
+Tests come first (TDD), CI checks every push to main and every pull request;
+what blocks a merge depends on the imported ruleset.
 
 ## What you build vs. what guides you
 
 | | Paths | Licence |
 |---|---|---|
-| **Your project** (what is being built) | `src/app/` (domain, application, interfaces, infrastructure), `tests/`, `docs/PROJECT.md`, `docs/TASKS.md`, `docs/specs/`, `docs/adr/`, `README.md` | Your team's choice (`LICENSE` section 2) |
+| **Your project** (what is being built) | `src/app/` (domain, application, interfaces, infrastructure), `tests/`, `docs/PROJECT.md`, `docs/TASKS.md`, `docs/WORKING-AGREEMENT.md`, `docs/specs/`, `docs/adr/`, `README.md` | Your team's choice (`LICENSE` section 2) |
 | **The AI-SDLC process** (how it is built) | `AGENTS.md`, `CONTRIBUTING.md`, `skills/`, `scripts/`, `.github/`, `environments/`, `docs/INDEX.json`, `docs/STANDARDS.md`, `docs/AGENT-GUIDANCE.md` | CC BY 4.0 (`LICENSE` section 1) |
 
 Both stay in the repository: the process files are your evidence of TDD,
@@ -95,7 +95,7 @@ For non-interactive setup, pass the same selection, for example `bash scripts/se
 ## Repository artefacts
 
 - `AGENTS.md` — lifecycle router and guardrails (`CLAUDE.md` imports it)
-- `CONTRIBUTING.md` — team workflow: change-size ladder, branches, PRs, agent
+- `CONTRIBUTING.md` — team workflow: change types, branches, PRs, agent
   git rules, repository setup
 - `docs/INDEX.json` — map of phases, skills and review-gated files
 - `docs/PROJECT.md` — project context and commands

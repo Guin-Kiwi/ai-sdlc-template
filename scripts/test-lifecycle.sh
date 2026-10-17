@@ -60,6 +60,9 @@ make_fixture() {
   local dir="$TEMP_DIR/$name"
   cp -R "$BASE_DIR" "$dir"
   write_tasks "$dir" "$phase" "$status" "$use_case" "$acceptance" "$evidence"
+  if [[ "$phase" =~ ^[1-5]$ ]]; then
+    sed -i 's/| TBD |/| Confirmed |/g' "$dir/docs/WORKING-AGREEMENT.md"
+  fi
   printf '%s\n' "$dir"
 }
 
@@ -124,6 +127,60 @@ expect_pass "derived project without template maintenance guidance" "$d"
 
 d=$(make_fixture valid-validate 4 in-progress "$UC_OK" "$ACCEPT_OK" "$EVIDENCE_OK")
 expect_pass "VALIDATE state with a concrete use case" "$d"
+
+d=$(make_fixture agreement-tbd-bootstrap 0 ready "$UC_PLACEHOLDER" "$ACCEPT_PLACEHOLDER" "$EVIDENCE_PLACEHOLDER")
+cat > "$d/docs/WORKING-AGREEMENT.md" <<'EOF'
+# Working agreement
+
+Team conventions; humans and agents both follow this file; change it by team agreement.
+
+## Workflow
+| Topic | Agreement |
+| --- | --- |
+| Solo or team | TBD <choose solo or team> |
+
+## Conventions
+| Topic | Agreement |
+| --- | --- |
+| Decision records | TBD <record the team convention> |
+EOF
+expect_pass "TBD working agreement at BOOTSTRAP" "$d"
+
+d=$(make_fixture agreement-tbd-specify 1 in-progress "$UC_OK" "$ACCEPT_OK" "$EVIDENCE_OK")
+cat > "$d/docs/WORKING-AGREEMENT.md" <<'EOF'
+# Working agreement
+
+Team conventions; humans and agents both follow this file; change it by team agreement.
+
+## Workflow
+| Topic | Agreement |
+| --- | --- |
+| Solo or team | TBD <choose solo or team> |
+
+## Conventions
+| Topic | Agreement |
+| --- | --- |
+| Decision records | TBD <record the team convention> |
+EOF
+expect_fail "TBD working agreement after BOOTSTRAP" "$d" "docs/WORKING-AGREEMENT.md has TBD values after BOOTSTRAP"
+
+d=$(make_fixture agreement-filled-specify 1 in-progress "$UC_OK" "$ACCEPT_OK" "$EVIDENCE_OK")
+cat > "$d/docs/WORKING-AGREEMENT.md" <<'EOF'
+# Working agreement
+
+Team conventions; humans and agents both follow this file; change it by team agreement.
+
+## Workflow
+| Topic | Agreement |
+| --- | --- |
+| Solo or team | Solo |
+
+## Conventions
+| Topic | Agreement |
+| --- | --- |
+| Decision records | ADR for consequential decisions; UC otherwise |
+EOF
+expect_pass "filled working agreement after BOOTSTRAP" "$d"
 
 d=$(make_fixture placeholder-use-case 1 in-progress "$UC_PLACEHOLDER" "$ACCEPT_OK" "$EVIDENCE_OK")
 expect_fail "placeholder current use case after BOOTSTRAP" "$d" "must name a concrete current use case"

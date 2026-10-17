@@ -12,7 +12,7 @@ itself is defined in `AGENTS.md`; this file covers team workflow.
 2. **Build**: continue with the next phases in the chat. Read each change in
    **Source Control** before it is committed.
 3. **Share**: publish the branch, open a pull request on GitHub, read the
-   `advisory` warnings, get one approval, then **Rebase and merge**.
+  `advisory` warnings, then merge as your ruleset requires.
 4. **Finish**: after the PR is merged, switch to `main` in VS Code and select
   **Sync** to pull.
 
@@ -94,7 +94,7 @@ Guides: [create an issue](https://docs.github.com/en/issues/tracking-your-work-w
 
 | Severity | Effect | Used for |
 |---|---|---|
-| Block | CI fails; the PR cannot merge | Real breakage: missing or inconsistent lifecycle files, a filled-in UC or ADR template, duplicate UC/ADR numbers, failing tests |
+| Block | CI fails; this blocks merging when your ruleset requires the check | Real breakage: missing or inconsistent lifecycle files, a filled-in UC or ADR template, duplicate UC/ADR numbers, failing tests |
 | Warn | Yellow annotation on the PR; merging is allowed | A small-tier commit changed use cases, ADRs, `AGENTS.md`, `CONTRIBUTING.md`, workflows or rulesets; any agent commit changed a review-gated file (`docs/INDEX.json`); a phase lacks `model_tier` in `docs/INDEX.json` |
 | Info | Shown in the CI summary only | An agent commit without `Agent-Tier` |
 
@@ -131,15 +131,15 @@ not. Answering "partly" is fine and tells the PR reviewer where to look.
 
 A review recorded after a flagged commit marks it as human-reviewed: the PR
 advisory then shows "human-reviewed by <name>" instead of a warning. This
-only settles the advisory; the teammate's approval is still required.
+only settles the advisory; any approval your ruleset requires is still needed.
 
 ## Review and merge
 
+Applies when your ruleset requires pull requests.
+
 - Follow [`docs/WORKING-AGREEMENT.md`](docs/WORKING-AGREEMENT.md) for review and
   merge requirements.
-- Files listed in `.github/CODEOWNERS` also need a code owner's review.
 - The reviewer approves under **Files changed → Review changes → Approve**.
-- To merge, choose **Rebase and merge** from the arrow next to the merge button.
 - **`docs/TASKS.md` conflicts** are expected when two branches run in
   parallel: each branch records its own use case there. To resolve, keep
   `main`'s version, then put back your branch's PHASE, STATUS and current use
@@ -184,7 +184,7 @@ ruleset**, from `.github/rulesets/`
 - Optional, only if you publish releases: `release-tags.json` lets only
   admins create, move or delete `v*` tags.
 
-Rulesets on private repositories need GitHub Pro on the owner's account
-(included in the GitHub Student Developer Pack). Also enable secret scanning
+See GitHub's rulesets documentation linked above for which plans support
+rulesets. Also enable secret scanning
 with push protection and Dependabot alerts under **Settings → Code security**,
 and **Automatically delete head branches** under **Settings → General**.
