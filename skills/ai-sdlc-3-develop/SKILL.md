@@ -50,6 +50,8 @@ Follow TDD:
 
 RED → GREEN → REFACTOR
 
+Apply AGENTS.md rule 7 to every file this change touched.
+
 ---
 
 ## Commands

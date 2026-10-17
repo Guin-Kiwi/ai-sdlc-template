@@ -9,3 +9,5 @@ docs/WORKING-AGREEMENT.md holds the defaults for derived projects; the template'
 The template ships ready to use: no history, tombstones, amendment notes or "previously…" wording in shipped files. Template history lives in git.
 
 Everything else follows [`AGENTS.md`](AGENTS.md).
+
+When applying AGENTS.md rule 7 here, also ask whether a fact is true only while this repository is the template; if so, it belongs in this file, or bootstrap removes it.

@@ -122,6 +122,20 @@ Prefer:
 
 over long freeform explanations.
 
+### 7) One authority per fact
+Each fact is true in exactly one place, in this repository or outside it.
+Everything else points to that place, derives from it, or queries it. A newer
+decision record replaces an older one. Test oracles and versioned reference
+data that names its source are the only deliberate copies. A fact is any
+value, rule, list, status or claim, in prose, code, data or config.
+
+For each fact you write or change: find where it is true. If that is
+elsewhere, derive it if it can be computed, point to it if it is in another
+file, or link or query it if it is outside the repository. A team choice
+goes in docs/WORKING-AGREEMENT.md, or an ADR if it is hard to reverse.
+Delete what a newer decision replaced or what only records history. Put a
+fact where whoever acts on it reads. Define labels. Prefer a check to prose.
+
 ## Definition of done for any agent step
 A step is only done when all applicable items are true:
 
