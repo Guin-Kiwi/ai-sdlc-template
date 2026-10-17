@@ -17,9 +17,9 @@ README_PROCESS_END = "<!-- END GENERATED PROCESS PATHS -->"
 DOCKER_PROCESS_BEGIN = "# BEGIN GENERATED PROCESS PATHS"
 DOCKER_PROCESS_END = "# END GENERATED PROCESS PATHS"
 PATH_REGISTRY = {
-    (pathlib.Path("README.md"), README_PROJECT_BEGIN, README_PROJECT_END): ("project", "inline"),
-    (pathlib.Path("README.md"), README_PROCESS_BEGIN, README_PROCESS_END): ("process", "inline"),
-    (pathlib.Path(".dockerignore"), DOCKER_PROCESS_BEGIN, DOCKER_PROCESS_END): ("process", "docker"),
+    (pathlib.Path("README.md"), README_PROJECT_BEGIN, README_PROJECT_END): ("project", "inline", True),
+    (pathlib.Path("README.md"), README_PROCESS_BEGIN, README_PROCESS_END): ("process", "inline", True),
+    (pathlib.Path(".dockerignore"), DOCKER_PROCESS_BEGIN, DOCKER_PROCESS_END): ("process", "docker", False),
 }
 
 
@@ -82,6 +82,16 @@ def generated_docker_paths(paths):
     return "\n".join(paths)
 
 
+def without_template_only(paths, template_only):
+    return [
+        path for path in paths
+        if not any(
+            path == exempt or (exempt.endswith("/") and path.startswith(exempt))
+            for exempt in template_only
+        )
+    ]
+
+
 def replace_region(content, replacement, path, begin_marker, end_marker):
     begin_count = content.count(begin_marker)
     end_count = content.count(end_marker)
@@ -120,9 +130,12 @@ def main():
         for path, begin_marker, end_marker, generated in targets:
             registry_target = PATH_REGISTRY.get((path, begin_marker, end_marker))
             if registry_target:
-                key, format_name = registry_target
-                generated = (generated_docker_paths(index[key]) if format_name == "docker"
-                             else generated_inline_paths(index[key]))
+                key, format_name, hide_template_only = registry_target
+                paths = index[key]
+                if hide_template_only:
+                    paths = without_template_only(paths, index.get("template_only", []))
+                generated = (generated_docker_paths(paths) if format_name == "docker"
+                             else generated_inline_paths(paths))
             updated = replace_region(replacements[path], generated, path, begin_marker, end_marker)
             if updated is not None:
                 replacements[path] = updated

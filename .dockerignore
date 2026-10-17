@@ -23,6 +23,7 @@ docs/INDEX.json
 docs/STANDARDS.md
 docs/AGENT-GUIDANCE.md
 .github/
+.github/copilot-instructions.md
 environments/
 # END GENERATED PROCESS PATHS
 docs/

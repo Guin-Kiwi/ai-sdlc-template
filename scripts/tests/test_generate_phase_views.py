@@ -256,8 +256,11 @@ class GeneratePhaseViewsTests(unittest.TestCase):
         for path in index["project"]:
             self.assertIn(f"`{path}`", readme)
         for path in index["process"]:
-            self.assertIn(path, readme)
             self.assertIn(path, dockerignore)
+            if path in index["template_only"]:
+                self.assertNotIn(path, readme)
+            else:
+                self.assertIn(path, readme)
         self.assertIn("keep-me", dockerignore)
         self.assertIn("also-keep-me", dockerignore)
 

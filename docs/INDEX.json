@@ -75,18 +75,14 @@
     "docs/STANDARDS.md",
     "docs/AGENT-GUIDANCE.md",
     ".github/",
+    ".github/copilot-instructions.md",
     "environments/"
   ],
   "template_only": [
     "MAINTAINING.md",
     "docs/future/",
     "CITATION.cff",
-    ".zenodo.json",
-    ".devcontainer/",
-    ".vscode/",
-    ".agents/",
-    ".claude/",
-    ".cursor/"
+    ".zenodo.json"
   ],
   "review_gated": {
     "rule": "Edit only with a human's explicit approval; changes need a code owner's review (.github/CODEOWNERS).",
