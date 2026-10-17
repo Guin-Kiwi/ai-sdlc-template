@@ -7,8 +7,8 @@ description: Determine minimal architecture components for the current use case.
 
 ## Decisions
 
-- Significant choices → `docs/adr/ADR-NNN-short-title.md` (unused number),
-  copied from `docs/adr/ADR-TEMPLATE.md`.
+- Significant choices → follow the decision-record convention in
+    `docs/WORKING-AGREEMENT.md`; create the ADR from `docs/adr/ADR-TEMPLATE.md`.
 - Record status, context, alternatives, decision and consequences.
 - Human acceptance → update `PROJECT.md` and propose durable rules in `AGENTS.md`.
 - Preserve superseded ADRs; review related changes together.

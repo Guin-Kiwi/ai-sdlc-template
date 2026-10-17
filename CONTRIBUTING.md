@@ -8,12 +8,13 @@ itself is defined in `AGENTS.md`; this file covers team workflow.
 
 1. **Start**: in the chat view type `/ai-sdlc` → `specify` (Copilot) or
    `/ai-sdlc-1-specify` (Claude Code) and describe the feature or fix. The
-   agent creates the branch and the spec.
+  agent creates or joins the branch and writes the spec.
 2. **Build**: continue with the next phases in the chat. Read each change in
    **Source Control** before it is committed.
 3. **Share**: publish the branch, open a pull request on GitHub, read the
    `advisory` warnings, get one approval, then **Rebase and merge**.
-4. **Finish**: back in VS Code, switch to `main` and select **Sync** to pull.
+4. **Finish**: after the PR is merged, switch to `main` in VS Code and select
+  **Sync** to pull.
 
 The sections below explain each step when you need more.
 
@@ -70,21 +71,17 @@ tier. Move down when the change type requires less judgement.
 
 ## Use cases, branches and pull requests
 
-- The agent creates the branch when SPECIFY starts: `uc-NNN-<short-name>`
-  for a use case.
-- Issues are optional. If you want the team to see planned work on GitHub,
-  open a **Use case** issue first (**Issues → New issue → Use case**; your
-  agent can draft the text) and give the agent its number: issue #42 →
-  `docs/specs/UC-042-<NAME>.md`. Without an issue, the agent takes the next
-  free number. Pick one way as a team so numbers do not clash.
-- One use case per branch and per PR. With an issue, the PR body says
-  `Closes #42`.
+- Follow [`docs/WORKING-AGREEMENT.md`](docs/WORKING-AGREEMENT.md) for branch
+  naming, use-case numbering and one-use-case-per-branch conventions.
+- Issues are optional. To propose planned work on GitHub, open **Issues → New
+  issue → Use case**; your agent can draft the text. With an issue, the PR body
+  says `Closes #42`.
 - On a branch, `docs/TASKS.md` describes that branch's use case only. Before
   merging, update the branch from `main` and reconcile `docs/TASKS.md` and
   any UC or ADR numbers with what `main` already has.
 - ADR numbers: take the next unused number on `main`. CI rejects duplicates.
-- Change shared files (`AGENTS.md`, `docs/PROJECT.md`, `docs/INDEX.json`,
-  `.github/`) in their own small PR, not mixed into feature work.
+- Follow the agreement's shared-file convention before changing
+  `AGENTS.md`, `docs/PROJECT.md`, `docs/INDEX.json` or `.github/`.
 - App code, including app scripts and CLIs, lives under `src/app/` and its
   tests under `tests/`. `scripts/` is AI-SDLC tooling; do not put app code there.
 
@@ -138,12 +135,11 @@ only settles the advisory; the teammate's approval is still required.
 
 ## Review and merge
 
-- Every change to `main` goes through a PR with one teammate's approval and
-  passing CI, and the branch must be up to date with `main`.
+- Follow [`docs/WORKING-AGREEMENT.md`](docs/WORKING-AGREEMENT.md) for review and
+  merge requirements.
 - Files listed in `.github/CODEOWNERS` also need a code owner's review.
 - The reviewer approves under **Files changed → Review changes → Approve**.
-- The author merges after approval, using **Rebase and merge** (choose it
-  from the arrow next to the merge button).
+- To merge, choose **Rebase and merge** from the arrow next to the merge button.
 - **`docs/TASKS.md` conflicts** are expected when two branches run in
   parallel: each branch records its own use case there. To resolve, keep
   `main`'s version, then put back your branch's PHASE, STATUS and current use
@@ -159,8 +155,7 @@ Guides: [review a pull request](https://docs.github.com/en/pull-requests/how-tos
 ## Commits
 
 - Keep the TDD steps as separate commits (failing test, then implementation,
-  then refactor). PRs are **rebase-merged** so this history stays on `main`
-  as evidence.
+  then refactor).
 - Use the commit prefixes documented in the [Change types](#change-types) table above.
 - Commits written by a coding agent end with two trailers, which the PR
   advisory reads:

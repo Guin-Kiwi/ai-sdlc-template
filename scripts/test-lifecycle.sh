@@ -114,6 +114,10 @@ d=$(make_fixture template-maintenance-guidance 0 ready "$UC_PLACEHOLDER" "$ACCEP
 printf '# Template maintenance\n' > "$d/MAINTAINING.md"
 expect_pass "template maintenance guidance present" "$d"
 
+d=$(make_fixture missing-working-agreement 0 ready "$UC_PLACEHOLDER" "$ACCEPT_PLACEHOLDER" "$EVIDENCE_PLACEHOLDER")
+rm "$d/docs/WORKING-AGREEMENT.md"
+expect_fail "missing working agreement listed in INDEX" "$d" "docs/INDEX.json references missing path docs/WORKING-AGREEMENT.md"
+
 d=$(make_fixture derived-project-without-maintenance-guidance 0 ready "$UC_PLACEHOLDER" "$ACCEPT_PLACEHOLDER" "$EVIDENCE_PLACEHOLDER")
 rm -f "$d/MAINTAINING.md"
 expect_pass "derived project without template maintenance guidance" "$d"

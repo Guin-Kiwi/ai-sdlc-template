@@ -11,6 +11,8 @@ selected next phase starts as ready. Changes to this router require human review
 
 If `MAINTAINING.md` exists, this repository is the template itself: also follow `MAINTAINING.md`.
 
+Read `docs/WORKING-AGREEMENT.md` before branching, merging, or choosing between a UC and an ADR.
+
 ---
 
 This repository is an **AI-assisted SDLC template**.

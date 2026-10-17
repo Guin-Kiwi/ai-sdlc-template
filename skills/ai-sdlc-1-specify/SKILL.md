@@ -27,8 +27,7 @@ docs/specs/UC-[NNN]-[NAME].md
 
 Rules:
 
-- NNN = the GitHub issue number if the user gives one (issue #42 → 042),
-  otherwise the next sequential number (001, 002, …)
+- NNN and the branch name → follow `docs/WORKING-AGREEMENT.md`.
 - NAME = short uppercase identifier
 - words separated with `-`
 
@@ -42,9 +41,8 @@ If a UC for the feature already exists → **update it instead of creating a new
 
 ## Branch
 
-If on `main`, create and switch to `uc-NNN-<short-name>` (lowercase, same
-NNN as the UC file) before writing anything. On an existing use-case branch,
-stay on it.
+Create or join the branch before writing anything; use its name per
+`docs/WORKING-AGREEMENT.md`.
 
 ---
 
