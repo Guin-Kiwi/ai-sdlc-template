@@ -1,12 +1,48 @@
 {
-  "purpose": "Map of lifecycle phases and their skills (each skill's SKILL.md holds its instructions; its index.json only holds metadata such as model_tier, for scripts), what is being built (project) versus the AI-SDLC tooling (process), and the files that need a human's review. Each review-gated file and template also says so in its own first lines.",
+  "purpose": "Map of lifecycle phases and their skills, model tiers, and instructions; what is being built (project) versus the AI-SDLC tooling (process); and the files that need a human's review. Each review-gated file and template also says so in its own first lines.",
   "phases": [
-    {"phase": 0, "name": "BOOTSTRAP", "skill": "skills/ai-sdlc-0-bootstrap/", "instructions": "skills/ai-sdlc-0-bootstrap/SKILL.md"},
-    {"phase": 1, "name": "SPECIFY", "skill": "skills/ai-sdlc-1-specify/", "instructions": "skills/ai-sdlc-1-specify/SKILL.md"},
-    {"phase": 2, "name": "DESIGN", "skill": "skills/ai-sdlc-2-design/", "instructions": "skills/ai-sdlc-2-design/SKILL.md"},
-    {"phase": 3, "name": "DEVELOP", "skill": "skills/ai-sdlc-3-develop/", "instructions": "skills/ai-sdlc-3-develop/SKILL.md"},
-    {"phase": 4, "name": "VALIDATE", "skill": "skills/ai-sdlc-4-validate/", "instructions": "skills/ai-sdlc-4-validate/SKILL.md"},
-    {"phase": 5, "name": "DEPLOY", "skill": "skills/ai-sdlc-5-deploy/", "instructions": "skills/ai-sdlc-5-deploy/SKILL.md"}
+    {
+      "phase": 0,
+      "name": "BOOTSTRAP",
+      "skill": "skills/ai-sdlc-0-bootstrap/",
+      "model_tier": "large",
+      "instructions": "skills/ai-sdlc-0-bootstrap/SKILL.md"
+    },
+    {
+      "phase": 1,
+      "name": "SPECIFY",
+      "skill": "skills/ai-sdlc-1-specify/",
+      "model_tier": "large",
+      "instructions": "skills/ai-sdlc-1-specify/SKILL.md"
+    },
+    {
+      "phase": 2,
+      "name": "DESIGN",
+      "skill": "skills/ai-sdlc-2-design/",
+      "model_tier": "large",
+      "instructions": "skills/ai-sdlc-2-design/SKILL.md"
+    },
+    {
+      "phase": 3,
+      "name": "DEVELOP",
+      "skill": "skills/ai-sdlc-3-develop/",
+      "model_tier": "standard",
+      "instructions": "skills/ai-sdlc-3-develop/SKILL.md"
+    },
+    {
+      "phase": 4,
+      "name": "VALIDATE",
+      "skill": "skills/ai-sdlc-4-validate/",
+      "model_tier": "standard",
+      "instructions": "skills/ai-sdlc-4-validate/SKILL.md"
+    },
+    {
+      "phase": 5,
+      "name": "DEPLOY",
+      "skill": "skills/ai-sdlc-5-deploy/",
+      "model_tier": "standard",
+      "instructions": "skills/ai-sdlc-5-deploy/SKILL.md"
+    }
   ],
   "lifecycle_state": "docs/TASKS.md",
   "project_context": "docs/PROJECT.md",

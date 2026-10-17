@@ -55,15 +55,10 @@ Guides: [Copilot Chat](https://code.visualstudio.com/docs/chat/chat-overview),
 
 ## Choosing a model
 
-The human picks the model; each skill's `index.json` gives a `model_tier`
+The human picks the model; see `docs/INDEX.json` for each phase's `model_tier`
 hint. Switch models with the model picker under the chat box (Copilot) or
-`/model` (Claude Code).
-
-| Work | Tier |
-|---|---|
-| BOOTSTRAP, SPECIFY, DESIGN, ADRs: judgement and trade-offs | large |
-| DEVELOP against a failing test, VALIDATE, DEPLOY | standard |
-| Fast Track, single commits, docs, small refactors | small |
+`/model` (Claude Code). For work outside a phase, choose a tier appropriate
+to its scope and judgement required.
 
 Start one tier lower than you think. If the same test still fails after two
 fix attempts, or the agent asks questions the spec already answers, move up a
@@ -99,7 +94,7 @@ Guides: [create an issue](https://docs.github.com/en/issues/tracking-your-work-w
 | Severity | Effect | Used for |
 |---|---|---|
 | Block | CI fails; the PR cannot merge | Real breakage: missing or inconsistent lifecycle files, a filled-in UC or ADR template, duplicate UC/ADR numbers, failing tests |
-| Warn | Yellow annotation on the PR; merging is allowed | A small-tier commit changed use cases, ADRs, `AGENTS.md`, `CONTRIBUTING.md`, workflows or rulesets; any agent commit changed a review-gated file (`docs/INDEX.json`); a Fast Track branch exceeded its scope; a skill lacks `model_tier` |
+| Warn | Yellow annotation on the PR; merging is allowed | A small-tier commit changed use cases, ADRs, `AGENTS.md`, `CONTRIBUTING.md`, workflows or rulesets; any agent commit changed a review-gated file (`docs/INDEX.json`); a Fast Track branch exceeded its scope; a phase lacks `model_tier` in `docs/INDEX.json` |
 | Info | Shown in the CI summary only | An agent commit without `Agent-Tier`; a large tier on a Fast Track branch |
 
 Checks run on GitHub: the `structure` job blocks, the `advisory` job only

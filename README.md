@@ -13,10 +13,12 @@ application-specific code.
 
 ## How it works
 
-Your agent does the work in phases, and you approve the results: BOOTSTRAP
-(once, to define the project), then SPECIFY → DESIGN → DEVELOP → VALIDATE →
-DEPLOY for each feature. Each phase is a skill in `skills/` that the agent
-follows; `AGENTS.md` routes it there. Small fixes take a shorter Fast Track.
+Your agent does the work in phases, and you approve the results:
+<!-- BEGIN GENERATED PHASE LIST -->
+BOOTSTRAP (once, to define the project), then SPECIFY → DESIGN → DEVELOP → VALIDATE → DEPLOY for each feature.
+<!-- END GENERATED PHASE LIST -->
+Each phase is a skill in `skills/` that the agent follows; `AGENTS.md` routes it
+there. Small fixes take a shorter Fast Track.
 Tests come first (TDD), CI checks every pull request, and only real breakage
 blocks a merge.
 

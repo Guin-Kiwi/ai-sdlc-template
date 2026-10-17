@@ -25,13 +25,6 @@ if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
   [ -z "$tracked" ] || fail "tracked environment/cache files: $(printf '%s\n' "$tracked" | head -3 | tr '\n' ' ')(remove with git rm -r --cached; see .gitignore)"
 fi
 
-for dir in skills/*/; do
-  [ -f "${dir}SKILL.md" ] || fail "missing ${dir}SKILL.md"
-  python3 -m json.tool "${dir}index.json" > /dev/null 2>&1 || fail "missing or invalid ${dir}index.json"
-  python3 -c 'import json,sys; sys.exit(json.load(open(sys.argv[1])).get("model_tier") not in ("small","standard","large"))' "${dir}index.json" 2>/dev/null \
-    || warn "${dir}index.json has no valid model_tier (small, standard or large); see CONTRIBUTING.md"
-done
-
 python3 - <<'PY' || failures=$((failures + 1))
 import json, os, sys
 try:
@@ -39,12 +32,27 @@ try:
 except Exception as e:
     print(f"✗ docs/INDEX.json is not valid JSON: {e}")
     sys.exit(1)
-paths = [p["skill"] for p in index["phases"]] + [p["instructions"] for p in index["phases"]]
+paths = []
+missing_skills = []
+for phase in index["phases"]:
+    skill = phase["skill"]
+    instructions = phase["instructions"]
+    paths.extend((skill, instructions))
+    if not os.path.isfile(os.path.join(skill, "SKILL.md")):
+        print(f"✗ missing {skill}SKILL.md")
+        missing_skills.append(skill)
 paths += index["review_gated"]["paths"] + index["templates"]["paths"] + index["project"] + index["process"]
 missing = [p for p in paths if not os.path.exists(p)]
 for p in missing:
     print(f"✗ docs/INDEX.json references missing path {p}")
-sys.exit(1 if missing else 0)
+for phase in index.get("phases", []):
+    tier = phase.get("model_tier")
+    if tier not in ("small", "standard", "large"):
+        message = f"phase {phase.get('phase')} has no valid model_tier (small, standard or large); see CONTRIBUTING.md"
+        print(f"⚠ {message}")
+        if "GITHUB_ACTIONS" in os.environ:
+            print(f"::warning::{message}")
+sys.exit(1 if missing or missing_skills else 0)
 PY
 
 phase=$(sed -n 's/^PHASE: *//p' docs/TASKS.md | head -1)

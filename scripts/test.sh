@@ -13,6 +13,7 @@ if ! "$PYTHON" -m pytest --version > /dev/null 2>&1; then
 fi
 
 bash scripts/check-lifecycle.sh
+"$PYTHON" scripts/generate_phase_views.py --check
 bash scripts/test-lifecycle.sh
 "$PYTHON" -m unittest discover -s scripts/tests -q
 "$PYTHON" -m pytest -q

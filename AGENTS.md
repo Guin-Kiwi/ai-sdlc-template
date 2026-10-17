@@ -69,14 +69,7 @@ primary source of truth.
 
 ---
 
-## Phase → Skill
-
-0 → skills/ai-sdlc-0-bootstrap  
-1 → skills/ai-sdlc-1-specify  
-2 → skills/ai-sdlc-2-design  
-3 → skills/ai-sdlc-3-develop  
-4 → skills/ai-sdlc-4-validate  
-5 → skills/ai-sdlc-5-deploy  
+See `docs/INDEX.json` for the phase list and model-tier metadata.
 
 ---
 
