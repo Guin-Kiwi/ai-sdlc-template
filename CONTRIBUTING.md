@@ -56,9 +56,15 @@ Guides: [Copilot Chat](https://code.visualstudio.com/docs/chat/chat-overview),
 ## Choosing a model
 
 The human picks the model; see `docs/INDEX.json` for each phase's `model_tier`
-hint. Switch models with the model picker under the chat box (Copilot) or
-`/model` (Claude Code). For work outside a phase, choose a tier appropriate
-to its scope and judgement required.
+hint. For work outside a phase:
+
+| Work | Tier |
+|---|---|
+| ADRs: judgement and trade-offs | large |
+| Fast Track, single commits, docs, small refactors | small |
+
+Switch models with the model picker under the chat box (Copilot) or `/model`
+(Claude Code).
 
 Start one tier lower than you think. If the same test still fails after two
 fix attempts, or the agent asks questions the spec already answers, move up a

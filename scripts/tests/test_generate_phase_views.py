@@ -74,6 +74,23 @@ class GeneratePhaseViewsTests(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
             self.assertEqual(target.read_text(), original)
 
+    def test_check_skips_view_without_generated_region(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = pathlib.Path(tmp)
+            make_project(root)
+            initial_result = self.run_generator(root)
+            self.assertEqual(initial_result.returncode, 0, initial_result.stdout + initial_result.stderr)
+            readme = root / "README.md"
+            readme.write_text("Repository-specific README without generated markers.\n")
+
+            check_result = self.run_generator(root, "--check")
+            write_result = self.run_generator(root)
+            generated_readme = readme.read_text()
+
+        self.assertEqual(check_result.returncode, 0, check_result.stdout + check_result.stderr)
+        self.assertEqual(write_result.returncode, 0, write_result.stdout + write_result.stderr)
+        self.assertEqual(generated_readme, "Repository-specific README without generated markers.\n")
+
     def test_changed_index_phase_name_is_used_in_generated_views(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = pathlib.Path(tmp)

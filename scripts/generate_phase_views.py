@@ -43,11 +43,15 @@ def generated_text(path, phases):
 
 
 def replace_region(content, replacement, path):
-    if content.count(BEGIN) != 1 or content.count(END) != 1:
+    begin_count = content.count(BEGIN)
+    end_count = content.count(END)
+    if begin_count == 0 and end_count == 0:
+        return None
+    if begin_count != 1 or end_count != 1:
         raise ValueError(f"{path}: expected exactly one generated-region marker pair")
     start = content.index(BEGIN) + len(BEGIN)
     finish = content.index(END)
-    if finish < start:
+    if content.index(BEGIN) > content.index(END):
         raise ValueError(f"{path}: generated-region markers are out of order")
     return content[:start] + "\n" + replacement + "\n" + content[finish:]
 
@@ -72,6 +76,8 @@ def main():
         }
         stale = []
         for relative_path in VIEWS:
+            if replacements[relative_path] is None:
+                continue
             if originals[relative_path] != replacements[relative_path]:
                 stale.append(relative_path.as_posix())
                 if not args.check:

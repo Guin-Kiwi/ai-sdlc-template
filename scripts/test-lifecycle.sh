@@ -194,7 +194,7 @@ index = json.load(open(path))
 del index["phases"][3]["model_tier"]
 json.dump(index, open(path, "w"))
 PY
-expect_warn "phase without model_tier" "$d" "phase 3 has no valid model_tier"
+expect_warn "phase without model_tier" "$d" "phase 3 has no valid model_tier (small, standard or large); see docs/INDEX.json"
 
 d=$(make_fixture tier-invalid 0 ready "$UC_PLACEHOLDER" "$ACCEPT_PLACEHOLDER" "$EVIDENCE_PLACEHOLDER")
 python3 - "$d/docs/INDEX.json" <<'PY'
@@ -204,7 +204,7 @@ index = json.load(open(path))
 index["phases"][3]["model_tier"] = "huge"
 json.dump(index, open(path, "w"))
 PY
-expect_warn "phase with invalid model_tier" "$d" "phase 3 has no valid model_tier"
+expect_warn "phase with invalid model_tier" "$d" "phase 3 has no valid model_tier (small, standard or large); see docs/INDEX.json"
 
 d=$(make_fixture skill-index-files-removed 0 ready "$UC_PLACEHOLDER" "$ACCEPT_PLACEHOLDER" "$EVIDENCE_PLACEHOLDER")
 find "$d/skills" -name index.json -delete
@@ -218,7 +218,7 @@ index = json.load(open(path))
 index["phases"][3]["model_tier"] = "huge"
 json.dump(index, open(path, "w"))
 PY
-expect_warn "phase metadata remains authoritative without skill index files" "$d" "phase 3 has no valid model_tier"
+expect_warn "phase metadata remains authoritative without skill index files" "$d" "phase 3 has no valid model_tier (small, standard or large); see docs/INDEX.json"
 
 git_fixture() {
   local dir="$1"

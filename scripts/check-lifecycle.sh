@@ -48,7 +48,7 @@ for p in missing:
 for phase in index.get("phases", []):
     tier = phase.get("model_tier")
     if tier not in ("small", "standard", "large"):
-        message = f"phase {phase.get('phase')} has no valid model_tier (small, standard or large); see CONTRIBUTING.md"
+        message = f"phase {phase.get('phase')} has no valid model_tier (small, standard or large); see docs/INDEX.json"
         print(f"⚠ {message}")
         if "GITHUB_ACTIONS" in os.environ:
             print(f"::warning::{message}")
