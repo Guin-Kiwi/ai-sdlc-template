@@ -128,6 +128,14 @@ d=$(make_fixture no-spec-change-type 3 in-progress 'docs: clarify instructions' 
 sed -i 's/PHASE: 0/PHASE: 3/' "$d/docs/TASKS.md"
 expect_pass "known no-spec change-type entry after BOOTSTRAP" "$d"
 
+d=$(make_fixture grouped-no-spec-change-type 3 in-progress 'test: exercise lifecycle' "$ACCEPT_OK" "$EVIDENCE_OK")
+sed -i 's/PHASE: 0/PHASE: 3/' "$d/docs/TASKS.md"
+expect_pass "grouped prefix no-spec change type after BOOTSTRAP" "$d"
+
+d=$(make_fixture review-change-type 3 in-progress 'review: human check' "$ACCEPT_OK" "$EVIDENCE_OK")
+sed -i 's/PHASE: 0/PHASE: 3/' "$d/docs/TASKS.md"
+expect_pass "review entry does not require a spec" "$d"
+
 d=$(make_fixture unknown-change-type 3 in-progress 'unknown: clarify instructions' "$ACCEPT_OK" "$EVIDENCE_OK")
 sed -i 's/PHASE: 0/PHASE: 3/' "$d/docs/TASKS.md"
 expect_fail "unknown no-spec change type after BOOTSTRAP" "$d" "must name a concrete current use case or a known no-spec change type"

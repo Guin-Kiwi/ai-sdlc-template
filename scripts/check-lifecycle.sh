@@ -78,8 +78,11 @@ if [[ "$phase" =~ ^[1-5]$ ]]; then
     needs_spec=$(python3 - "$entry_prefix" <<'PY'
 import json, sys
 with open("docs/INDEX.json", encoding="utf-8") as fh:
-  change_type = json.load(fh).get("change_types", {}).get(sys.argv[1])
-print("no" if change_type and change_type.get("needs_spec") is False else "yes")
+    change_types = json.load(fh).get("change_types", {}).values()
+print("no" if any(
+    sys.argv[1] in item.get("prefixes", []) and item.get("needs_spec") is False
+    for item in change_types
+) else "yes")
 PY
 )
     if [[ -z "${entry_description//[[:space:]]/}" || "$needs_spec" != "no" ]]; then

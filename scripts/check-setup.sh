@@ -8,7 +8,7 @@ cd "$ROOT_DIR"
 
 failures=0
 ok()   { echo "✓ $1"; }
-fail() { echo "✗ $1"; echo "    fix: $2"; failures=$((failures + 1)); }
+fail() { echo "✗ $1"; echo "    Fix: $2"; failures=$((failures + 1)); }
 
 linked=0
 for dir in .agents .claude .cursor; do

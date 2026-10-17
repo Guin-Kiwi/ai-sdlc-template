@@ -121,11 +121,13 @@ class GeneratePhaseViewsTests(unittest.TestCase):
             index_path = root / "docs" / "INDEX.json"
             index = json.loads(index_path.read_text())
             index["change_types"] = {"fix": {
+                "prefixes": ["fix"],
                 "meaning": "custom correction",
                 "test": "a test description",
                 "workflow": "a workflow description",
                 "needs_spec": False,
-            }, "BREAKING": {
+            }, "breaking": {
+                "prefixes": ["!"],
                 "meaning": "breaking decision",
                 "test": "supersedes test",
                 "workflow": "record, ripple, code",
@@ -148,15 +150,29 @@ class GeneratePhaseViewsTests(unittest.TestCase):
             index_path = root / "docs" / "INDEX.json"
             index = json.loads(index_path.read_text())
             index["change_types"] = {"fix": {
+                "prefixes": ["fix"],
                 "meaning": "custom correction",
                 "test": "a test description",
                 "workflow": "a workflow description",
                 "needs_spec": False,
+            }, "tooling": {
+                "prefixes": ["test", "ci", "chore"],
+                "meaning": "tooling work",
+                "test": "app unchanged",
+                "workflow": "run checks",
+                "needs_spec": False,
             }, "BREAKING": {
+                "prefixes": ["!"],
                 "meaning": "breaking decision",
                 "test": "supersedes test",
                 "workflow": "record, ripple, code",
                 "needs_spec": True,
+            }, "review": {
+                "prefixes": ["review"],
+                "meaning": "human review",
+                "test": "no file changes",
+                "workflow": "record with scripts/sdlc.py review",
+                "needs_spec": False,
             }}
             index_path.write_text(json.dumps(index))
 
@@ -168,8 +184,26 @@ class GeneratePhaseViewsTests(unittest.TestCase):
         self.assertIn("custom correction", generated)
         self.assertIn("a test description", generated)
         self.assertIn("a workflow description", generated)
+        self.assertIn("`test:`, `ci:`, `chore:`", generated)
         self.assertIn("`!` after any prefix", generated)
+        self.assertIn("human review", generated)
         self.assertNotIn("stale table", generated)
+
+    def test_generated_table_contains_every_declared_prefix(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = pathlib.Path(tmp)
+            make_project(root)
+            result = self.run_generator(root)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            index = json.loads((root / "docs" / "INDEX.json").read_text())
+            generated = (root / "CONTRIBUTING.md").read_text()
+
+        for details in index["change_types"].values():
+            for prefix in details["prefixes"]:
+                if prefix == "!":
+                    self.assertIn("`!` after any prefix", generated)
+                else:
+                    self.assertIn(f"`{prefix}:`", generated)
 
 
 if __name__ == "__main__":

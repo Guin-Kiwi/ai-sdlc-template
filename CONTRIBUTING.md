@@ -17,20 +17,10 @@ itself is defined in `AGENTS.md`; this file covers team workflow.
 
 The sections below explain each step when you need more.
 
-## How big is this change?
-
-Pick the lowest level that fits.
-
-| Level | What qualifies | Record it in |
-|---|---|---|
-| 1. Commit | A step inside already-scoped work: a test, an implementation step, a refactor | The commit, on the use case's branch |
-| 2. Use case | Anything that adds or changes observable behaviour, i.e. something an acceptance criterion would describe | `docs/specs/UC-NNN-<NAME>.md` → branch → PR |
-| 3. ADR | A consequential decision that is hard to reverse or spans use cases: data store, auth approach, framework, a break in the layer rules | `docs/adr/ADR-NNN-<title>.md`, Proposed until a human accepts it, usually inside a use case's PR |
+## Change types
 
 If a teammate must agree on what the change should do first, it is `feat`; if
 they only need to check how it was done, it is `fix`, `refactor` or `docs`.
-
-## Change types
 
 <!-- BEGIN GENERATED CHANGE TYPES -->
 | Prefix | Meaning | Test | Workflow |
@@ -38,11 +28,10 @@ they only need to check how it was done, it is `fix`, `refactor` or `docs`.
 | `fix:` | Makes behaviour match an existing spec or decision. | Does a spec already say this is how it should behave? | Regression test first, then fix. |
 | `refactor:` | Changes structure, not behaviour. | Do all existing tests pass unchanged? | Tests unchanged and green; remove duplication. |
 | `docs:` | Changes wording, not meaning. | Would every rule, value and decision read the same afterwards? | Link check only. |
-| `test:` | Tooling and process, no product behaviour. | Does the app behave the same? | As fix; review closely if review-gated paths are touched. |
-| `ci:` | Tooling and process, no product behaviour. | Does the app behave the same? | As fix; review closely if review-gated paths are touched. |
-| `chore:` | Tooling and process, no product behaviour. | Does the app behave the same? | As fix; review closely if review-gated paths are touched. |
+| `test:`, `ci:`, `chore:` | Tooling and process, no product behaviour. | Does the app behave the same? | Run the checks; review closely if review-gated paths are touched. |
 | `feat:` | Adds behaviour or a new versioned ruleset, keeping existing decisions. | Does anything that already exists change meaning? | Spec, tests and code together in one change. |
 | `!` after any prefix | After any prefix, changes or removes a decision others depend on. | Does it supersede or retire anything? | Change record (supersedes, retires), ripple, code in the same change. |
+| `review:` | Records a human review via scripts/sdlc.py, no file changes. | Were the changes checked by a human? | Record with scripts/sdlc.py review. |
 <!-- END GENERATED CHANGE TYPES -->
 
 ## Working with an agent
@@ -172,8 +161,7 @@ Guides: [review a pull request](https://docs.github.com/en/pull-requests/how-tos
 - Keep the TDD steps as separate commits (failing test, then implementation,
   then refactor). PRs are **rebase-merged** so this history stays on `main`
   as evidence.
-- Use conventional prefixes: `feat:`, `fix:`, `test:`, `refactor:`, `docs:`,
-  `ci:`, `chore:`, and `review:` for recorded human reviews.
+- Use the commit prefixes documented in the [Change types](#change-types) table above.
 - Commits written by a coding agent end with two trailers, which the PR
   advisory reads:
 

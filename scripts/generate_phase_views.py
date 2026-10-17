@@ -26,6 +26,9 @@ def read_index(root):
             raise ValueError("phases must contain named entries")
         if not change_types or any(
             not all(isinstance(details.get(key), str) for key in ("meaning", "test", "workflow"))
+            or not isinstance(details.get("prefixes"), list)
+            or not details["prefixes"]
+            or any(not isinstance(prefix, str) or not prefix for prefix in details["prefixes"])
             or not isinstance(details.get("needs_spec"), bool)
             for details in change_types.values()
         ):
@@ -55,10 +58,10 @@ def generated_text(path, phases):
 def generated_change_types(change_types):
     lines = ["| Prefix | Meaning | Test | Workflow |", "|---|---|---|---|"]
     for prefix, details in change_types.items():
-        if prefix == "BREAKING":
+        if "!" in details["prefixes"]:
             label = "`!` after any prefix"
         else:
-            label = f"`{prefix}:`"
+            label = ", ".join(f"`{item}:`" for item in details["prefixes"])
         lines.append(
             f"| {label} | {details['meaning']} | {details['test']} | {details['workflow']} |"
         )

@@ -64,52 +64,69 @@
   },
   "change_types": {
     "fix": {
+      "prefixes": [
+        "fix"
+      ],
       "meaning": "Makes behaviour match an existing spec or decision.",
       "test": "Does a spec already say this is how it should behave?",
       "workflow": "Regression test first, then fix.",
       "needs_spec": false
     },
     "refactor": {
+      "prefixes": [
+        "refactor"
+      ],
       "meaning": "Changes structure, not behaviour.",
       "test": "Do all existing tests pass unchanged?",
       "workflow": "Tests unchanged and green; remove duplication.",
       "needs_spec": false
     },
     "docs": {
+      "prefixes": [
+        "docs"
+      ],
       "meaning": "Changes wording, not meaning.",
       "test": "Would every rule, value and decision read the same afterwards?",
       "workflow": "Link check only.",
       "needs_spec": false
     },
-    "test": {
+    "tooling": {
+      "prefixes": [
+        "test",
+        "ci",
+        "chore"
+      ],
       "meaning": "Tooling and process, no product behaviour.",
       "test": "Does the app behave the same?",
-      "workflow": "As fix; review closely if review-gated paths are touched.",
-      "needs_spec": false
-    },
-    "ci": {
-      "meaning": "Tooling and process, no product behaviour.",
-      "test": "Does the app behave the same?",
-      "workflow": "As fix; review closely if review-gated paths are touched.",
-      "needs_spec": false
-    },
-    "chore": {
-      "meaning": "Tooling and process, no product behaviour.",
-      "test": "Does the app behave the same?",
-      "workflow": "As fix; review closely if review-gated paths are touched.",
+      "workflow": "Run the checks; review closely if review-gated paths are touched.",
       "needs_spec": false
     },
     "feat": {
+      "prefixes": [
+        "feat"
+      ],
       "meaning": "Adds behaviour or a new versioned ruleset, keeping existing decisions.",
       "test": "Does anything that already exists change meaning?",
       "workflow": "Spec, tests and code together in one change.",
       "needs_spec": true
     },
     "BREAKING": {
+      "prefixes": [
+        "!"
+      ],
       "meaning": "After any prefix, changes or removes a decision others depend on.",
       "test": "Does it supersede or retire anything?",
       "workflow": "Change record (supersedes, retires), ripple, code in the same change.",
       "needs_spec": true
+    },
+    "review": {
+      "prefixes": [
+        "review"
+      ],
+      "meaning": "Records a human review via scripts/sdlc.py, no file changes.",
+      "test": "Were the changes checked by a human?",
+      "workflow": "Record with scripts/sdlc.py review.",
+      "needs_spec": false
     }
   },
   "templates": {
