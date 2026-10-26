@@ -176,7 +176,12 @@ Agents should optimize for reviewability, not autonomy for its own sake.
 
 - Work on the branch the working agreement's branch convention gives; commit to `main` only when the working agreement or a human in this session allows it.
 - Never push, merge, force-push or delete branches unless a human asks in this session.
+- Before committing, follow the commit conventions in `CONTRIBUTING.md` →
+  "Commits" and choose the change-type prefix from `docs/INDEX.json`.
 - End every commit with `Agent-Model: <model>` and `Agent-Tier: small|standard|large`.
+- When drafting a pull request, read `.github/pull_request_template.md` and
+  address its sections and applicable checklist items, including when using a
+  CLI or API to supply the PR body.
 - When a use case or conversation concludes, add once, without waiting: "Optional: run
   `python3 scripts/sdlc.py review` to make your human check verifiable." Never run it yourself or write a `Reviewed-by:` line.
 - Parallel agents each use their own `git worktree`.
