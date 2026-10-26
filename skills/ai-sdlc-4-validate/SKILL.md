@@ -38,13 +38,18 @@ Verify:
 
 ### 2. Verify E2E Tests when declared
 
+Review the active use case’s validation plan and demonstrate each applicable
+user-facing journey using its specified automated or manual evidence. Record
+any incomplete or deferred journey; do not claim it is complete from backend
+checks alone.
+
 If `docs/PROJECT.md` declares an E2E command or an E2E release requirement,
 check:
 
 tests/e2e/
 
-Extend existing tests if needed. If E2E is not declared, record it as not
-applicable rather than inventing an application-level test.
+Extend existing tests if needed. If E2E automation is not declared, record it as not applicable; this does
+not replace the journey evidence specified above.
 
 ---
 

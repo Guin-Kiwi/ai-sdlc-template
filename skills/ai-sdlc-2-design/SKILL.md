@@ -59,7 +59,9 @@ Examples:
 
 Update it **only if necessary**.
 
-Prefer **extending existing artifacts** instead of creating new ones.
+Extend an existing component when its responsibility remains cohesive; create
+a separate component when it has a distinct responsibility. Avoid speculative
+abstractions and splits based only on file length.
 
 ---
 

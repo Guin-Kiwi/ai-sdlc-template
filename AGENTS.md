@@ -192,7 +192,8 @@ privilege, no hardcoded secrets, input validation, traceability) and
 - Use the language of the current user prompt for all communication and all
   natural-language artifacts. Do not default to the language of earlier
   messages.
-- Update existing artifacts; create only what is missing.
+- Keep artifacts cohesive; extend existing ones when appropriate and create new
+  ones when they have a distinct purpose.
 - Avoid unnecessary comments in code.
 - Read the [canonical AI-SDLC documentation](https://docs.aisl.science/learning-and-resources/ai-sdlc)
   when terminology or lifecycle responsibilities are unclear.

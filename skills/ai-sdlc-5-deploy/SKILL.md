@@ -25,6 +25,11 @@ If a CD workflow exists:
 - verify trigger
 - verify deployment step
 - verify required secrets
+- identify the validated commit or artifact deployed, including manual paths
+- decide how to verify the intended version is serving; an availability check
+  alone may reach an older version
+- when stored data or schemas change, plan compatibility, migration or reset,
+  and recovery before deployment; record decisions and required authorization
 
 Update only if necessary.
 

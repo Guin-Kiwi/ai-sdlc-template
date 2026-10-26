@@ -25,10 +25,13 @@ Weak grounding signals:
 ## 2. Sizing a step (illustrates "smallest useful slice")
 
 Decompose further when:
-- the task touches multiple files
+- it contains independently valuable changes that can be reviewed separately
 - requirements are incomplete
 - architecture could be affected
-- implementation and validation are both needed
+- the resulting step would be difficult to review, validate, or revert
+
+Keep implementation and its validation together, even when they touch multiple
+files.
 
 A good step is independently understandable, easy to review, easy to
 validate, and easy to revert.

@@ -25,30 +25,15 @@ docs/PROJECT.md
 
 Derive tests from the UC.
 
-Acceptance → Integration tests  
-Domain rules → Unit tests  
-Use case logic → Unit tests  
+Choose unit, integration or end-to-end checks according to the behavior and
+risk. Cover the observable outcome at an appropriate boundary. Keep tests
+focused; create or split files when that gives them a clear responsibility.
 
-Locations
-
-tests/integration  
-tests/unit  
-
-Prefer **extending existing test files**.
-
-Create new files only if necessary.
-
----
-
-## Order
-
-1. Integration tests  
-2. Unit tests  
-3. Implementation
-
-Follow TDD:
-
-RED → GREEN → REFACTOR
+Work in small TDD cycles: identify or write a failing test, implement the
+smallest change, then refactor while preserving behavior. During refactoring,
+look for mixed responsibilities, unclear names and harmful duplication. Add
+characterization tests first if existing coverage does not protect the behavior.
+Avoid abstractions based only on speculative needs.
 
 Apply AGENTS.md rule 7 to every file this change touched.
 

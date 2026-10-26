@@ -70,6 +70,10 @@ docs/specs/UC-TEMPLATE.md
 - Open questions / assumptions
 - Notes for implementation
 
+For a user-facing outcome, identify the complete journey and how it will be
+demonstrated, including dependencies on other slices. Choose automated or manual
+evidence as appropriate; record a deferred or incomplete journey explicitly.
+
 Do not add unnecessary text. Write "none" for sections that don't apply.
 
 ---
