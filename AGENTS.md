@@ -21,12 +21,11 @@ repo-local requirements govern it.
 Follow the selected phase's skill. Phases may be skipped or repeated:
 SPECIFY → DESIGN → DEVELOP → VALIDATE, then iterate or DEPLOY.
 
-Maintain `docs/TASKS.md`: PHASE identifies the selected phase. Set STATUS to
-ready when a new phase is explicitly selected, in-progress when work starts,
-and done only when its required outputs are verified and all required checks
-have passed. Failed or missing required checks keep it in-progress unless an
-unavailable prerequisite prevents progress; then set blocked and record why.
-Keep PHASE unchanged when work finishes.
+Maintain `docs/TASKS.md`: PHASE identifies the selected phase. Use STATUS ready
+when a new phase is explicitly selected, in-progress while work or review is
+underway, and done when required outputs are verified and required checks pass.
+While in-progress, explain what remains, any missing decision or prerequisite,
+and the next action. Keep PHASE unchanged when work finishes.
 
 ## Project structure and commands
 
@@ -127,7 +126,10 @@ State the uncertainty, options and recommended next step.
   `docs/INDEX.json`. End agent commits with `Agent-Model: <model>` and
   `Agent-Tier: small|standard|large`.
 - Before drafting a PR, read `.github/pull_request_template.md` and address its
-  sections and applicable checklist, including for CLI/API submissions.
+  sections and applicable checklist, including for CLI/API submissions. Prepare
+  documents in their intended merged state: an ADR submitted for acceptance may
+  say Accepted, with acceptance established through the agreed review and merge.
+  Keep exploratory ADRs Proposed and report only actual test and approval evidence.
 - At use-case or conversation end, add once: "Optional: run
   `python3 scripts/sdlc.py review` to make your human check verifiable."
   Never run it yourself or write a `Reviewed-by:` line.
