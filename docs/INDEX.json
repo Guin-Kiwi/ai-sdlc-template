@@ -113,8 +113,8 @@
         "refactor"
       ],
       "meaning": "Changes structure, not behaviour.",
-      "test": "Do all existing tests pass unchanged?",
-      "workflow": "Tests unchanged and green; remove duplication.",
+      "test": "Is observable behaviour preserved?",
+      "workflow": "Protect existing behaviour with tests, adding characterization coverage if needed; refactor in small steps.",
       "needs_spec": false
     },
     "docs": {

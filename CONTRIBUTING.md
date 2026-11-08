@@ -27,7 +27,7 @@ they only need to check how it was done, it is `fix`, `refactor` or `docs`.
 | Prefix | Meaning | Test | Workflow |
 |---|---|---|---|
 | `fix:` | Makes behaviour match an existing spec or decision. | Does a spec already say this is how it should behave? | Regression test first, then fix. |
-| `refactor:` | Changes structure, not behaviour. | Do all existing tests pass unchanged? | Tests unchanged and green; remove duplication. |
+| `refactor:` | Changes structure, not behaviour. | Is observable behaviour preserved? | Protect existing behaviour with tests, adding characterization coverage if needed; refactor in small steps. |
 | `docs:` | Changes wording, not meaning. | Would every rule, value and decision read the same afterwards? | Link check only. |
 | `test:`, `ci:`, `chore:` | Tooling and process, no product behaviour. | Does the app behave the same? | Run the checks; review closely if review-gated paths are touched. |
 | `feat:` | Adds behaviour or a new versioned ruleset, keeping existing decisions. | Does anything that already exists change meaning? | Spec, tests and code together in one change. |

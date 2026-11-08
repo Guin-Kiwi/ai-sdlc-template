@@ -1,203 +1,144 @@
-# AGENTS.md — AI-SDLC Router
+# AI-SDLC Router
 
-Repository state lives in:
-
-`docs/TASKS.md`
-
-Maintain `docs/TASKS.md`: PHASE = selected phase; STATUS = ready, in-progress,
-done or blocked. Set in-progress on entry, done only after the phase output is
-verified, or blocked with a reason. Keep PHASE on completion; an explicitly
-selected next phase starts as ready. Changes to this router require human review.
-
-If `MAINTAINING.md` exists, this repository is the template itself: also follow `MAINTAINING.md`.
-
-Read `docs/WORKING-AGREEMENT.md` before branching, merging, or choosing between a UC and an ADR.
-
----
-
-This repository is an **AI-assisted SDLC template**.
-It guides both humans and coding agents through small, testable, reviewable
-software delivery steps.
-
-## Core principles
-- **AI-SDLC**
-- **TDD**
-- **Clean Architecture**
-- **Small Vertical Slices**
-
----
-
-Phases may be **skipped or repeated**.
-
-Typical iteration:
-
-SPECIFY → DESIGN → DEVELOP → VALIDATE  
-VALIDATE → SPECIFY (iteration)  
-DEPLOY → SPECIFY (feedback)
-
----
-
-## Collaboration
-
-- Human-approved decisions → ADR; current architecture → `docs/PROJECT.md`.
-- Durable rules + ADR links → `AGENTS.md`, with human approval/review.
-- Update related files together; preserve decision history and reconcile parallel changes.
-- `CONTRIBUTING.md` is the team workflow for humans; agents do not need to read it.
-- App code goes in `src/app/`, its tests in `tests/`; `scripts/` and `skills/` are process tooling (`docs/INDEX.json` "project" vs "process").
+Changes to this file require human review. If `MAINTAINING.md` exists, follow it
+for template maintenance. Read `docs/WORKING-AGREEMENT.md` before branching,
+merging or choosing between a UC and an ADR.
 
 ## Context Load Order
 
-Before making any change, load context in this order:
+Before changes, read:
 
-0. `docs/INDEX.json` — machine-readable map of phases, skills and which files
-  need human review before editing; load this first.
-1. `docs/TASKS.md`
-2. `docs/PROJECT.md`
-3. `docs/specs/UC-[NNN]-[NAME].md` (unless its change type needs no spec)
+0. `docs/INDEX.json` — phases, skill paths, model tiers, change types and review gates.
+1. `docs/TASKS.md` — current priority, phase and status.
+2. `docs/PROJECT.md` — project constraints, architecture and commands.
+3. The active `docs/specs/UC-[NNN]-[NAME].md` — slice requirements, unless the
+   change type needs no spec.
 
-If these sources conflict:
-- `docs/TASKS.md` determines current execution priority/status
-- `docs/PROJECT.md` defines project-wide constraints
-- the active use-case spec defines slice-specific requirements
-- if still unclear, stop and ask the human
+Use each source for its stated scope. Resolve conflicts with the human when
+these scopes do not settle them. External knowledge supports implementation;
+repo-local requirements govern it.
 
-External knowledge may support implementation, but repo-local documents are the
-primary source of truth.
+Follow the selected phase's skill. Phases may be skipped or repeated:
+SPECIFY → DESIGN → DEVELOP → VALIDATE, then iterate or DEPLOY.
 
----
+Maintain `docs/TASKS.md`: PHASE identifies the selected phase. Use STATUS ready
+when a new phase is explicitly selected, in-progress while work or review is
+underway, and done when required outputs are verified and required checks pass.
+While in-progress, explain what remains, any missing decision or prerequisite,
+and the next action. Keep PHASE unchanged when work finishes.
 
-See `docs/INDEX.json` for the phase list and model-tier metadata.
+## Project structure and commands
 
----
+App code: `src/app/`. App tests: `tests/`. Process tooling: `scripts/` and
+`skills/`; see `docs/INDEX.json` for the full project/process split.
 
-## Commands
+Use install, test, run and release commands from `docs/PROJECT.md`. Python is
+established by [ADR-000](docs/adr/ADR-000-python-as-project-language.md). Do not
+assume a framework or deployment platform before project setup establishes it.
 
-Use the project-specific install, test, run and release commands documented in
-`docs/PROJECT.md`. The language is Python
-([ADR-000](docs/adr/ADR-000-python-as-project-language.md)). Do not assume a
-framework or deployment platform before the project context has been completed.
-
----
+Keep current architecture in `docs/PROJECT.md`, human-approved consequential
+decisions in ADRs, and durable agent rules and ADR links here. Update related
+files together, preserve decision history and reconcile parallel changes.
 
 ## Agent operating rules
 
 ### 1) Work in the smallest useful slice
-Prefer the smallest end-to-end increment that produces observable value.
-Do not mix unrelated changes in one step.
+Choose the smallest end-to-end increment with observable value; keep unrelated
+changes separate.
 
 ### 2) Follow TDD
-When code changes are required:
-1. write or identify the test first
-2. implement the minimal change to pass
-3. refactor while preserving behavior
-
-If the repository is not yet at a coding phase, produce only the minimal
-documentation or planning artifact required by the current phase.
+For code changes: identify or write a failing test, implement the minimum to pass,
+then refactor while preserving behavior. Before a coding phase, produce only the
+planning or documentation that the selected phase needs.
 
 ### 3) Respect Clean Architecture
-Keep business rules independent from frameworks, UI, databases, and delivery
-mechanisms. Avoid coupling decisions that reduce future flexibility without
-explicit justification.
+Keep business rules independent of frameworks, UI, databases and delivery.
+Justify coupling that reduces flexibility.
 
-### 4) Keep artifacts minimal but sufficient
-Create only artifacts that directly support execution, clarity, validation, or
-handoff. Do not create ceremonial documentation.
+### 4) Keep artifacts useful
+Create or extend cohesive artifacts for execution, clarity, validation or handoff.
+Create new files when they have a distinct purpose; avoid unnecessary code comments.
 
-### 5) Ground work in explicit requirements
-For every meaningful task, identify:
-- the source requirement
-- the intended outcome
-- the evidence that will show completion
+### 5) Ground work in requirements
+Identify each task's source requirement, outcome and completion evidence. Label
+assumptions; do not invent requirements.
 
-Do not invent hidden requirements.
-If you must assume something, label it clearly as an assumption.
-
-### 6) Show reasoning through evidence, not verbosity
-Prefer:
-- acceptance criteria
-- tests
-- checklists
-- diffs
-- traceable notes
-
-over long freeform explanations.
+### 6) Show evidence concisely
+Explain work through acceptance criteria, tests, checklists, diffs and traceable
+notes. Use the current prompt's language for communication and prose artifacts.
 
 ### 7) One authority per fact
-Each fact is true in exactly one place, in this repository or outside it.
-Everything else points to that place, derives from it, or queries it. A newer
-decision record replaces an older one. Test oracles and versioned reference
-data that names its source are the only deliberate copies. A fact is any
-value, rule, list, status or claim, in prose, code, data or config.
+Before writing or changing a value, rule, list, status or claim, find its single
+authority inside or outside the repo. Derive computed facts; link or query other
+authorities. Only test oracles and versioned reference data naming their source
+are deliberate copies.
 
-For each fact you write or change: find where it is true. If that is
-elsewhere, derive it if it can be computed, point to it if it is in another
-file, or link or query it if it is outside the repository. A team choice
-goes in docs/WORKING-AGREEMENT.md, or an ADR if it is hard to reverse.
-Delete what a newer decision replaced or what only records history. Put a
-fact where whoever acts on it reads. Define labels. Prefer a check to prose.
+Put facts where their users act on them. Team choices belong in
+`docs/WORKING-AGREEMENT.md`, or an ADR if hard to reverse. Newer decisions replace
+older ones; remove superseded content and history-only notes from shipped files.
+Define labels and prefer checks to prose. Resolve local evidence links relative
+to the containing document and verify that their targets exist.
 
-## Definition of done for any agent step
-A step is only done when all applicable items are true:
+## Test scope
 
-- the task is aligned with the current phase
-- the change is scoped to one small slice
-- relevant requirements are referenced
-- assumptions are called out
-- tests/checks/review evidence are included where applicable
-- `bash scripts/test.sh` passes
-- no unresolved ambiguity is hidden
-- risky actions were escalated when required
-- the repository remains coherent for the next agent or human
+- During TDD, run the smallest selection covering the change. Use the UC plan and
+  affected behavior; include impacted callers, integration boundaries and shared
+  fixtures. Broaden when impact is uncertain.
+- Rerun affected tests after refactoring. Code/tooling handoff requires passing
+  `bash scripts/test.sh` evidence. Reuse a passing run for unchanged code,
+  configuration and relevant environment; otherwise run it at handoff. CI and
+  release retain full checks. A phase transition alone does not require a rerun.
+- Prose-only changes need document/skill checks unless executable behavior or
+  tooling contracts are affected.
+- Record commands, scope, outcomes, skips and unavailable checks. A targeted pass
+  proves that scope only. Missing required evidence means incomplete validation;
+  linked CI may supply it for the same revision and required environment.
 
-Do not report completion based only on “files were edited”.
+## Definition of done
 
-## Stop-and-ask triggers
-Stop and ask the human before proceeding if any of the following occur:
+The step fits its phase and slice, references requirements, labels assumptions,
+passes applicable checks and includes required review evidence. Disclose unresolved
+ambiguity and missing checks, obtain required authorization, and leave a coherent
+handoff. Edited files alone do not establish completion.
 
-- requirements are ambiguous or conflicting
-- the requested change spans multiple slices and prioritization is unclear
-- architecture implications are non-trivial
-- a change would alter public interfaces, trust boundaries, or security posture
-- secrets, credentials, or production-like sensitive data are involved
-- the repo instructions conflict with external best practices in a way that affects delivery
-- validation criteria are missing and cannot be inferred safely
-- the task requires permissions or actions that are unavailable
-- an unresolved assumption would change behavior, scope, or architecture if wrong
-- the current skill's `model_tier` is above yours, or the same test still fails after two fix attempts
+## Stop and ask
 
-When stopping, present:
-- what is unclear
-- what options exist
-- your recommended next step
+Ask before proceeding when:
 
-Agents should optimize for reviewability, not autonomy for its own sake.
+- Requirements conflict or remain ambiguous; priorities across slices are unclear.
+- Architecture implications are non-trivial, or public interfaces, trust boundaries
+  or security posture would change.
+- Secrets, credentials or production-like sensitive data are involved.
+- External best practices conflict with repo instructions in a way affecting delivery.
+- Validation criteria cannot be safely inferred, or required access is unavailable.
+- An unresolved assumption could change behavior, scope or architecture.
+- The skill requires a higher model tier, or the same test fails after two fix attempts.
+
+State the uncertainty, options and recommended next step.
 
 ## Git and review
 
-- Work on the branch the working agreement's branch convention gives; commit to `main` only when the working agreement or a human in this session allows it.
-- Never push, merge, force-push or delete branches unless a human asks in this session.
-- End every commit with `Agent-Model: <model>` and `Agent-Tier: small|standard|large`.
-- When a use case or conversation concludes, add once, without waiting: "Optional: run
-  `python3 scripts/sdlc.py review` to make your human check verifiable." Never run it yourself or write a `Reviewed-by:` line.
-- Parallel agents each use their own `git worktree`.
+- Follow the working agreement's branch convention. Commit to `main` only when
+  the agreement or a human in this session allows it. Parallel agents use separate
+  `git worktree`s.
+- Push, merge, force-push and branch deletion require a human request in this session.
+- Before committing, read `CONTRIBUTING.md` → "Commits"; use the change type from
+  `docs/INDEX.json`. End agent commits with `Agent-Model: <model>` and
+  `Agent-Tier: small|standard|large`.
+- Before drafting a PR, read `.github/pull_request_template.md` and address its
+  sections and applicable checklist, including for CLI/API submissions. Prepare
+  documents in their intended merged state: an ADR submitted for acceptance may
+  say Accepted, with acceptance established through the agreed review and merge.
+  Keep exploratory ADRs Proposed and report only actual test and approval evidence.
+- At use-case or conversation end, add once: "Optional: run
+  `python3 scripts/sdlc.py review` to make your human check verifiable."
+  Never run it yourself or write a `Reviewed-by:` line.
 
-## Security and quality expectations
+## Supporting guidance
 
-See `docs/STANDARDS.md` for the standing security/quality checklist (least
-privilege, no hardcoded secrets, input validation, traceability) and
-`docs/AGENT-GUIDANCE.md` for supplementary practices not already covered above.
-
-## Rules
-
-- Use the language of the current user prompt for all communication and all
-  natural-language artifacts. Do not default to the language of earlier
-  messages.
-- Update existing artifacts; create only what is missing.
-- Avoid unnecessary comments in code.
-- Read the [canonical AI-SDLC documentation](https://docs.aisl.science/learning-and-resources/ai-sdlc)
-  when terminology or lifecycle responsibilities are unclear.
-- For standards and supporting rationale, see:
-  - `docs/STANDARDS.md`
-  - `docs/AGENT-GUIDANCE.md`
-
-If requirements or architecture are unclear → ask the user.
+`CONTRIBUTING.md` is the human workflow; agents need only its referenced sections.
+Load `docs/STANDARDS.md` for security/quality checks (least privilege, secrets,
+input validation and traceability), and `docs/AGENT-GUIDANCE.md` for supplementary
+examples and response guidance when relevant. Read the
+[canonical AI-SDLC documentation](https://docs.aisl.science/learning-and-resources/ai-sdlc)
+when terminology or lifecycle responsibilities are unclear.

@@ -6,57 +6,36 @@ disable-model-invocation: true
 
 # PHASE 5 — DEPLOY
 
-## Goal
+Verify the continuous deployment workflow for the validated artifact. Define
+deployment together with the user.
 
-Verify the **continuous deployment workflow** for the validated artifact.
+## Verify or define the CD workflow
 
-Deployment is defined **together with the user**.
+Inspect `.github/workflows/`.
 
----
+For an existing CD workflow, verify:
 
-## Check
+- Triggers, deployment steps and required secrets.
+- Which validated commit or artifact each path deploys, including manual paths.
+- How to confirm the intended version is serving; availability alone may show
+  an older version.
 
-Inspect:
+For stored-data or schema changes, plan compatibility, migration or reset, and
+recovery before deployment. Record the decisions and required authorization.
 
-.github/workflows/
+Update only as needed; obtain confirmation before overwriting workflows.
 
-If a CD workflow exists:
+If no CD workflow exists, ask for the deployment platform, propose a minimal
+workflow and create it only after confirmation.
 
-- verify trigger
-- verify deployment step
-- verify required secrets
+## Deployment constraints
 
-Update only if necessary.
+Deploy only the app (`src/`, runtime dependencies, `LICENSE`); keep process files
+in the repository. Never store secrets in the repository.
 
-If no workflow exists:
+## Completion evidence
 
-- ask the user for deployment platform
-- propose a minimal workflow
-- create only after confirmation
-
----
-
-## Rules
-
-- Deploy only the app (`src/`, runtime dependencies, `LICENSE`); process files stay in the repository.
-
-- Prefer **verifying existing workflows**.
-- Do not overwrite workflows without confirmation.
-- Never store secrets in the repository.
-
----
-
-## Evidence to provide
-
-- summary of what changed
-- what was validated
-- what remains out of scope
-- recommended next slice
-
----
-
-## Output
-
-Deployment workflow verified or updated.
+Report changes, validation, what remains out of scope and the next slice. State
+whether the workflow was verified or updated.
 
 Record phase 5 and status in `docs/TASKS.md` per `AGENTS.md`.

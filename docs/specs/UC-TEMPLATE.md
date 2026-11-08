@@ -46,6 +46,9 @@ What starts this use case?
 
 ## Acceptance criteria
 
+Link the source requirement or agreed decision for each criterion or related
+group. In the validation plan, identify which checks demonstrate these criteria.
+
 - Given  
   When  
   Then
