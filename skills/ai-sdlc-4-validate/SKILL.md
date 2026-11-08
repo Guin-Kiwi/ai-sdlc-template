@@ -70,6 +70,7 @@ Write commands, results and evidence links in the UC's Evidence section so they
 remain available after `docs/TASKS.md` advances. Report changes, validation,
 what remains out of scope and the next recommended slice.
 
-Update phase 4 and STATUS in `docs/TASKS.md` using `AGENTS.md`'s status rules.
-Required checks must pass for the release revision before declaring readiness;
-missing required evidence means validation remains incomplete.
+Declare readiness only when required checks pass for the release revision.
+Otherwise identify the failed check or missing prerequisite and the next action.
+Use that result to update phase 4 and STATUS in `docs/TASKS.md` under `AGENTS.md`'s
+status rules; include the reason and next action in the handoff.

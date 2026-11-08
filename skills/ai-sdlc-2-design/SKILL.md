@@ -30,9 +30,10 @@ Keep descriptions concise.
 
 Use `docs/WORKING-AGREEMENT.md` to decide whether a choice belongs in the UC or
 an ADR. When an ADR is needed, use `docs/adr/ADR-TEMPLATE.md` and record status,
-context, alternatives, decision and consequences. After human acceptance, update
-`docs/PROJECT.md` and propose any durable agent rules in `AGENTS.md`. Preserve
-superseded ADRs and review related changes together.
+context, alternatives, decision and consequences. Prepare related changes to
+`docs/PROJECT.md` and proposed durable rules in `AGENTS.md` under the working
+agreement’s acceptance and PR-state convention. Preserve superseded ADRs and
+review related changes together.
 
 ## Completion evidence
 

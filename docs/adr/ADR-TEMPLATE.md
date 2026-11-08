@@ -3,6 +3,7 @@
 
 ## Status
 Proposed | Accepted | Superseded by ADR-[NNN]
+Apply the proposal and acceptance convention in `docs/WORKING-AGREEMENT.md`.
 
 ## Context
 What forces or constraints make this decision necessary?
@@ -11,7 +12,9 @@ What forces or constraints make this decision necessary?
 - Option considered, and why it was not chosen.
 
 ## Decision
-What was decided, and who approved it.
+State the decision and its proposer (human or agent). Use the working agreement’s
+acceptance convention; for PR acceptance, use the PR’s review evidence rather
+than inventing an approver or approval date.
 
 ## Consequences
 What becomes easier or harder; follow-up changes to `docs/PROJECT.md` or `AGENTS.md`.

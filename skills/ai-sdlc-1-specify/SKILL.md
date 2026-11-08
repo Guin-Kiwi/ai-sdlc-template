@@ -37,7 +37,11 @@ appropriate; explicitly record deferred or incomplete journeys.
 
 ## Completion evidence
 
-Report acceptance criteria, boundaries, affected interfaces/components, risks,
-tradeoffs and validation approach. Identify the created or updated UC.
+The selected slice is specified when its behavior and acceptance criteria can be
+implemented without unresolved policy choices. Draft agreed portions while
+questions remain, but identify which behavior awaits a human decision. Questions
+about deferred work do not prevent completing the agreed slice.
 
-Record phase 1 and status in `docs/TASKS.md` per `AGENTS.md`.
+Report the UC, acceptance criteria, boundaries, affected interfaces/components,
+risks, tradeoffs and validation approach. State what can proceed and what cannot.
+Record phase 1 and STATUS in `docs/TASKS.md` using `AGENTS.md`'s status rules.

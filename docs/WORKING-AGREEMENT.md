@@ -15,3 +15,19 @@ Team conventions; humans and agents both follow this file; change it by team agr
 | --- | --- |
 | Decision records | Record a consequential decision that is hard to reverse or spans use cases (e.g. data store, auth approach, framework, a break in the layer rules) in an ADR; otherwise, record it in the use case. |
 | UC numbering | The issue number zero-padded to three digits (issue #42 → 042), otherwise the next sequential number (001, 002, …). |
+
+## ADR proposals and acceptance
+
+Humans and agents may propose decisions; record the proposer. Exploratory ideas
+remain Proposed. In solo work, an explicit owner decision counts as acceptance;
+a request to explore an option does not.
+
+Prepare PR documents to describe the resulting merged state. An ADR submitted
+for acceptance may say Accepted on the branch; designated secondary human review
+and merge establish acceptance in teamwork. No separate ADR approval or later
+status-only PR is required. Review evidence belongs to the PR; do not invent an
+approver or approval date before review occurs.
+
+If the reviewer selects another option, align the Decision and Consequences
+before merge. Approval covers the reviewed decision. This resulting-state
+convention does not turn unrun or failed checks into successful validation.
