@@ -136,6 +136,23 @@ goes in docs/WORKING-AGREEMENT.md, or an ADR if it is hard to reverse.
 Delete what a newer decision replaced or what only records history. Put a
 fact where whoever acts on it reads. Define labels. Prefer a check to prose.
 
+## Test scope
+
+- During TDD, run the smallest test selection that exercises the change. Start
+  from the UC validation plan and affected behavior; include callers, integration
+  boundaries or shared fixtures when impacted. Broaden when impact is uncertain.
+- After refactoring, rerun affected tests. Before handing off a completed code or
+  tooling slice, run `bash scripts/test.sh` once; CI and release keep their full
+  checks. Prose-only changes need relevant document/skill checks unless executable
+  behavior or tooling contracts are affected.
+- Reuse successful results for the same code, configuration and relevant environment.
+  After further edits, rerun affected checks; rerun the full suite at handoff if
+  its result is stale. Do not repeat a valid run just to close another phase.
+- Record commands, scope, outcomes and skipped or unavailable checks. A targeted
+  pass proves only that scope. If a required full run is unavailable, report
+  validation as incomplete; a linked CI run may supply that evidence when it
+  covers the same revision and required environment.
+
 ## Definition of done for any agent step
 A step is only done when all applicable items are true:
 
@@ -144,7 +161,7 @@ A step is only done when all applicable items are true:
 - relevant requirements are referenced
 - assumptions are called out
 - tests/checks/review evidence are included where applicable
-- `bash scripts/test.sh` passes
+- applicable checks pass per Test scope above; missing required evidence is explicit
 - no unresolved ambiguity is hidden
 - risky actions were escalated when required
 - the repository remains coherent for the next agent or human

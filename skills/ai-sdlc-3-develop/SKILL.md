@@ -23,17 +23,27 @@ docs/PROJECT.md
 
 ## Test Derivation
 
-Derive tests from the UC.
+Derive tests from the UC. Choose the appropriate boundary (unit, integration or
+end-to-end) for the behavior and risk.
 
-Choose unit, integration or end-to-end checks according to the behavior and
-risk. Cover the observable outcome at an appropriate boundary. Keep tests
-focused; create or split files when that gives them a clear responsibility.
+Before adding a case, inspect nearby tests. For the same behavior with different
+inputs and expected outcomes, prefer a readable parameterized table with named
+cases and meaningful boundaries and errors. Keep distinct behaviors or setups
+separate, and expected values independent of implementation logic.
 
-Work in small TDD cycles: identify or write a failing test, implement the
-smallest change, then refactor while preserving behavior. During refactoring,
-look for mixed responsibilities, unclear names and harmful duplication. Add
-characterization tests first if existing coverage does not protect the behavior.
-Avoid abstractions based only on speculative needs.
+Work in small TDD cycles: fail, implement the smallest change, then refactor.
+
+## Refactor after green
+
+Review the implementation and whole affected test files for mixed responsibilities,
+repeated setup or assertions, and helpers that obscure the case. Split by
+responsibility, parameterize equivalent cases or share setup when this improves
+clarity; file size alone is not a reason to split. Preserve meaningful coverage
+and boundaries. Add characterization tests if needed before refactoring, and
+avoid speculative abstractions or tests that mirror the implementation.
+
+Rerun relevant tests. Report the refactor or why none was needed. If a necessary
+refactor exceeds the slice, record its reason and impact as a follow-up.
 
 Apply AGENTS.md rule 7 to every file this change touched.
 
@@ -41,7 +51,9 @@ Apply AGENTS.md rule 7 to every file this change touched.
 
 ## Commands
 
-Run the project-specific unit tests documented in `docs/PROJECT.md`.
+Use the commands in `docs/PROJECT.md` with the test-scope policy in `AGENTS.md`.
+During TDD, select the affected test or group; use the full entrypoint at the
+completed slice handoff.
 
 ---
 
@@ -65,6 +77,6 @@ Run the project-specific unit tests documented in `docs/PROJECT.md`.
 
 Implementation complete.
 
-Unit tests pass.
+Affected tests and applicable handoff checks pass; report any missing evidence.
 
 Record phase 3 and status in `docs/TASKS.md` per `AGENTS.md`.

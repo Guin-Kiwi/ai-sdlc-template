@@ -26,13 +26,13 @@ docs/PROJECT.md
 
 ### 1. Run Local Tests
 
-Run the project-specific unit and integration test commands documented in
-`docs/PROJECT.md`.
+Apply `AGENTS.md`'s test-scope policy. Review available results against the active
+UC and required environment. Reuse applicable successful runs, including DEVELOP
+or CI evidence; run `bash scripts/test.sh` if full-suite evidence is missing or
+stale. Run additional declared checks only when not already covered.
 
-Verify:
-
-- unit tests pass
-- integration tests pass
+Record failures, skips and unavailable dependencies. A passing subset or skipped
+required check does not establish release readiness.
 
 ---
 
@@ -136,9 +136,8 @@ Create only if missing.
 
 ## Output
 
-Unit and integration tests pass.
-
-Repository verified.
+Applicable release checks pass with evidence for the revision being released.
+Report missing required checks as incomplete validation.
 
 Write the actual evidence (checks run, results, links) into the active UC
 file's "Evidence" section, so it stays with the use case after
