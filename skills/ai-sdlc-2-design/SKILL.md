@@ -5,86 +5,39 @@ description: Determine minimal architecture components for the current use case.
 
 # PHASE 2 — DESIGN
 
-## Decisions
+Identify the minimum architecture needed for the current use case. Generate no
+code, tests or implementation details.
 
-- Significant choices → follow the decision-record convention in
-    `docs/WORKING-AGREEMENT.md`; create the ADR from `docs/adr/ADR-TEMPLATE.md`.
-- Record status, context, alternatives, decision and consequences.
-- Human acceptance → update `PROJECT.md` and propose durable rules in `AGENTS.md`.
-- Preserve superseded ADRs; review related changes together.
-- Changes whose type needs no spec skip SPECIFY and DESIGN; see the change types in `docs/INDEX.json`.
+Changes needing no spec skip SPECIFY and DESIGN; see `docs/INDEX.json`.
 
-## Goal
+## Read the use case and project constraints
 
-Identify the **minimal architecture components** required for the current use case.
+Read the active `docs/specs/UC-[NNN]-[NAME].md` and `docs/PROJECT.md`. Ask the user
+if the UC is missing.
 
-Do not generate implementation details.
+## Identify required components
 
----
+Identify components across domain, application, interfaces and infrastructure:
+entities, use-case services, repository interfaces, persistence adapters or API
+endpoints as needed. Check whether the existing architecture satisfies the UC;
+propose only necessary changes.
 
-## Input
+Extend components while responsibilities stay cohesive; separate distinct
+responsibilities. Avoid speculative abstractions and file-length-driven splits.
+Keep descriptions concise.
 
-Current use case
+## Record design decisions
 
-docs/specs/UC-[NNN]-[NAME].md
+Use `docs/WORKING-AGREEMENT.md` to decide whether a choice belongs in the UC or
+an ADR. When an ADR is needed, use `docs/adr/ADR-TEMPLATE.md` and record status,
+context, alternatives, decision and consequences. After human acceptance, update
+`docs/PROJECT.md` and propose any durable agent rules in `AGENTS.md`. Preserve
+superseded ADRs and review related changes together.
 
-Architecture reference
+## Completion evidence
 
-docs/PROJECT.md
-
-If the UC does not exist → ask the user.
-
----
-
-## Steps
-
-1. Read the use case.
-
-2. Determine required components:
-
-domain  
-application  
-interfaces  
-infrastructure  
-
-Examples:
-
-- domain entity
-- use case service
-- repository interface
-- persistence adapter
-- API endpoint
-
-3. Ensure the architecture in `docs/PROJECT.md` is sufficient.
-
-Update it **only if necessary**.
-
-Extend an existing component when its responsibility remains cohesive; create
-a separate component when it has a distinct responsibility. Avoid speculative
-abstractions and splits based only on file length.
-
----
-
-## Rules
-
-- Do not implement code.
-- Do not generate tests.
-- Keep architecture descriptions minimal.
-
----
-
-## Evidence to provide
-
-- acceptance criteria
-- boundaries
-- interfaces or components affected
-- risks / tradeoffs
-- validation approach
-
----
-
-## Output
-
-Architecture verified or minimally updated.
+Report acceptance criteria, boundaries, affected components/interfaces, risks,
+tradeoffs and validation approach. State whether architecture was verified or
+minimally updated.
 
 Record phase 2 and status in `docs/TASKS.md` per `AGENTS.md`.

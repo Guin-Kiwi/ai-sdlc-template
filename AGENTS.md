@@ -21,9 +21,12 @@ repo-local requirements govern it.
 Follow the selected phase's skill. Phases may be skipped or repeated:
 SPECIFY → DESIGN → DEVELOP → VALIDATE, then iterate or DEPLOY.
 
-Maintain `docs/TASKS.md`: PHASE is the selected phase. Set STATUS to in-progress
-on entry, done after verifying phase output, or blocked with a reason. Keep
-PHASE on completion; an explicitly selected next phase starts as ready.
+Maintain `docs/TASKS.md`: PHASE identifies the selected phase. Set STATUS to
+ready when a new phase is explicitly selected, in-progress when work starts,
+and done only when its required outputs are verified and all required checks
+have passed. Failed or missing required checks keep it in-progress unless an
+unavailable prerequisite prevents progress; then set blocked and record why.
+Keep PHASE unchanged when work finishes.
 
 ## Project structure and commands
 
@@ -68,26 +71,26 @@ notes. Use the current prompt's language for communication and prose artifacts.
 ### 7) One authority per fact
 Before writing or changing a value, rule, list, status or claim, find its single
 authority inside or outside the repo. Derive computed facts; link or query other
-authorities. Only test oracles
-and versioned reference data naming their source are deliberate copies.
+authorities. Only test oracles and versioned reference data naming their source
+are deliberate copies.
 
 Put facts where their users act on them. Team choices belong in
 `docs/WORKING-AGREEMENT.md`, or an ADR if hard to reverse. Newer decisions replace
 older ones; remove superseded content and history-only notes from shipped files.
-Define labels and prefer checks to prose.
+Define labels and prefer checks to prose. Resolve local evidence links relative
+to the containing document and verify that their targets exist.
 
 ## Test scope
 
 - During TDD, run the smallest selection covering the change. Use the UC plan and
   affected behavior; include impacted callers, integration boundaries and shared
   fixtures. Broaden when impact is uncertain.
-- Rerun affected tests after refactoring. At completed code/tooling slice handoff,
-  run `bash scripts/test.sh` once. CI and release retain full checks. Prose-only
-  changes need document/skill checks unless executable behavior or tooling
-  contracts are affected.
-- Reuse successful results for unchanged code, configuration and relevant
-  environment. After edits, rerun affected checks and the full suite at handoff
-  if its result is stale. A phase transition alone does not invalidate a run.
+- Rerun affected tests after refactoring. Code/tooling handoff requires passing
+  `bash scripts/test.sh` evidence. Reuse a passing run for unchanged code,
+  configuration and relevant environment; otherwise run it at handoff. CI and
+  release retain full checks. A phase transition alone does not require a rerun.
+- Prose-only changes need document/skill checks unless executable behavior or
+  tooling contracts are affected.
 - Record commands, scope, outcomes, skips and unavailable checks. A targeted pass
   proves that scope only. Missing required evidence means incomplete validation;
   linked CI may supply it for the same revision and required environment.

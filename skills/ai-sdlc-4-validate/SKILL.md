@@ -5,141 +5,71 @@ description: Verify repository readiness for release.
 
 # PHASE 4 — VALIDATE
 
-Changes whose type needs no spec skip SPECIFY and DESIGN; see the change types in `docs/INDEX.json`.
+Verify release readiness against `docs/PROJECT.md` and the active UC's validation
+plan. Inspect existing artifacts first; update only where needed and create
+files only if missing. Avoid duplicate workflows.
 
-## Goal
+Changes needing no spec skip SPECIFY and DESIGN; see `docs/INDEX.json`.
 
-Verify that the repository is ready for its declared release path.
+## Check test evidence
 
-Focus on **checking existing artifacts**.
+Apply `AGENTS.md`'s test-scope policy. Match evidence to the revision and required
+environment. Reuse applicable DEVELOP or CI results; run `bash scripts/test.sh`
+when full-suite evidence is missing or stale. Run uncovered declared checks.
+For example, a full run's unit results do not need a separate unit rerun.
 
----
+Record failures, skips and unavailable dependencies. A passing subset does not
+satisfy a required check that failed or did not run.
 
-## Source of Truth
+## Demonstrate user journeys
 
-docs/TASKS.md  
-docs/PROJECT.md  
+Demonstrate each applicable UC journey with its planned automated or manual
+evidence. Backend checks alone do not establish a complete user journey.
 
----
+If E2E automation is declared, inspect and extend `tests/e2e/` as needed.
+Otherwise mark automation not applicable and use a manual demonstration where
+appropriate. Missing automation alone does not defer the journey. Record any
+incomplete or deferred journey explicitly.
 
-## Steps
+## Evaluate runtime AI when used
 
-### 1. Run Local Tests
+For applications using AI at runtime, execute the UC's evaluation plan as well
+as software tests. Model substitutes test application behavior, not live model
+quality. Coding-agent use alone does not trigger this section.
 
-Apply `AGENTS.md`'s test-scope policy. Review available results against the active
-UC and required environment. Reuse applicable successful runs, including DEVELOP
-or CI evidence; run `bash scripts/test.sh` if full-suite evidence is missing or
-stale. Run additional declared checks only when not already covered.
+Record model/prompt versions or identifiers, input/reference provenance, the
+basis for expected outcomes, actual results and limitations. Keep evaluation
+labels out of model inputs unless deliberately required by the experiment.
+Distinguish live runs, synthetic scenarios and replays. Evaluate model outputs
+and downstream rules separately. Report unrun evaluations as incomplete.
 
-Record failures, skips and unavailable dependencies. A passing subset or skipped
-required check does not establish release readiness.
+Keep external calls within agreed access and usage budgets; ordinary CI need
+not make paid model calls.
 
----
+## Verify the declared artifact
 
-### 2. Verify E2E Tests when declared
+For a declared container, inspect `Dockerfile` and verify build, app startup and
+runtime contents: `src/`, runtime dependencies and `LICENSE`. Process files stay
+outside the image via `.dockerignore`. If no build artifact is declared, record
+this check as not applicable.
 
-Review the active use case’s validation plan and demonstrate each applicable
-user-facing journey using its specified automated or manual evidence. Record
-any incomplete or deferred journey; do not claim it is complete from backend
-checks alone.
+## Verify CI and release
 
-If `docs/PROJECT.md` declares an E2E command or an E2E release requirement,
-check:
+Inspect `.github/workflows/ci.yml` and `.github/workflows/release.yml`. Both must
+run `scripts/test.sh` with the documented unit/integration checks. Update that
+entrypoint as needed; it ships running `tests/` with pytest, after CI installs
+dependencies. Do not add a separate test workflow.
 
-tests/e2e/
+Verify release publishes the declared artifact and includes declared E2E checks.
+A template without an application artifact may publish a source release and
+mark container/E2E checks not applicable. Create a release workflow only if missing.
 
-Extend existing tests if needed. If E2E automation is not declared, record it as not applicable; this does
-not replace the journey evidence specified above.
+## Record completion evidence
 
----
+Write commands, results and evidence links in the UC's Evidence section so they
+remain available after `docs/TASKS.md` advances. Report changes, validation,
+what remains out of scope and the next recommended slice.
 
-### Evaluate runtime AI when applicable
-
-If the application uses an AI model at runtime, follow the active UC's declared
-evaluation plan as well as its software tests. Tests with a model substitute
-verify application behavior; they do not establish the live model's quality.
-
-Record the model and prompt versions or identifiers, input/reference provenance,
-expected-outcome basis, actual results and limitations. Keep evaluation labels
-out of model inputs unless the experiment deliberately requires them. Distinguish
-live runs, synthetic scenarios and recorded replays. Assess model outputs and
-downstream rule execution separately so correct routing does not conceal an
-incorrect assessment. Report unrun evaluations as incomplete.
-
-Run external calls within the project's agreed access and usage budget; ordinary
-CI need not make paid model calls. This section does not apply merely because
-coding agents were used to develop the application.
-
----
-
-### 3. Verify the declared artifact
-
-If `docs/PROJECT.md` declares a container artifact, check:
-
-Dockerfile
-
-Verify the container builds and starts the application, and that the image
-contains only the app (`src/`, runtime dependencies, `LICENSE`); the root
-`.dockerignore` already excludes the process files. If no container or other
-build artifact is declared, record the artifact check as not applicable.
-
----
-
-### 4. Verify CI
-
-Check:
-
-.github/workflows/ci.yml
-
-CI and release run `scripts/test.sh`. Create or update it so it runs:
-
-- unit tests
-- integration tests
-
-using the commands documented in `docs/PROJECT.md`. Do not add a separate test
-workflow. `scripts/test.sh` ships running `tests/` with `pytest`, and CI installs
-the project's requirements first.
-
----
-
-### 5. Verify Release Workflow
-
-Check:
-
-.github/workflows/release.yml
-
-Verify it runs `scripts/test.sh` and publishes the artifact declared in
-`docs/PROJECT.md`, when one exists. Verify the declared E2E checks there as
-well. A template repository with no application artifact may publish a source
-release and record container/E2E checks as not applicable.
-
-Create only if missing.
-
----
-
-## Rules
-
-- Prefer **verifying and extending existing artifacts**.
-- Create files only if they do not exist.
-- Avoid duplicate workflows.
-
----
-
-## Evidence to provide
-
-- summary of what changed
-- what was validated
-- what remains out of scope
-- recommended next slice
-
----
-
-## Output
-
-Applicable release checks pass with evidence for the revision being released.
-Report missing required checks as incomplete validation.
-
-Write the actual evidence (checks run, results, links) into the active UC
-file's "Evidence" section, so it stays with the use case after
-`docs/TASKS.md` moves on. Record phase 4 and status in `docs/TASKS.md` per
-`AGENTS.md`.
+Update phase 4 and STATUS in `docs/TASKS.md` using `AGENTS.md`'s status rules.
+Required checks must pass for the release revision before declaring readiness;
+missing required evidence means validation remains incomplete.

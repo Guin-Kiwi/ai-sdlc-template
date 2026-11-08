@@ -5,152 +5,67 @@ description: Initialize or align a repository for AI-SDLC based on the intended 
 
 # PHASE 0 — BOOTSTRAP
 
-## Goal
+Align the repository with the intended system. Clarify its purpose and framework
+with the user; ask before proceeding if unclear. Python is established by ADR-000;
+do not ask the user to choose a language.
 
-Align the repository with the **intended system** and prepare it for AI-SDLC.
+## 1. Identify existing code and authoritative inputs
 
----
+Inspect structure, dependencies, code and tests. Identify authoritative briefs,
+requirements, models and supplied inputs; link them under Resources in
+`docs/PROJECT.md`, noting relevant scope and versions. Distinguish approved requirements,
+proposals and assumptions. Resolve conflicts affecting the first slice before
+implementing it; recency alone does not establish authority.
 
-## Required Input
+## 2. Align structure
 
-Clarify with the user:
+Reuse compatible structure. Ensure Clean Architecture layers under `src/app/`:
+`domain/`, `application/`, `interfaces/`, `infrastructure/`; and `tests/unit/`,
+`tests/integration/`, `tests/e2e/`.
 
-- system / app purpose
-- framework
+The template supplies this skeleton, `__init__.py` files for test discovery and
+`tests/unit/test_architecture.py` for dependency rules. Create only missing parts;
+avoid duplication or unnecessary restructuring.
 
-The language is Python (ADR-000); do not ask for it.
+## 3. Dependencies
 
-If unclear → ask before proceeding.
+Inspect `requirements.txt` and `pyproject.toml`; reuse existing manifests and
+create a minimal one only if missing.
 
----
+Keep the Python/FastAPI default profile: devcontainer, `environments/python/`,
+`scripts/setup-python.sh` and Python `.gitignore` entries. Setup copies
+`requirements.txt`, `.python-version` and `.vscode/launch.json` into the project.
+Adjust requirements for the chosen framework and commit the copied files. For a
+non-Python project, stop and ask the user (ADR-000).
 
-## Actions
+## 4. Define the project and working agreement
 
-### 1. Inspect repository
+Update `docs/PROJECT.md`, or create it if missing. Cover purpose, architecture,
+structure, resources and reference links, commands, and dependencies.
 
-Check existing:
+Confirm `docs/WORKING-AGREEMENT.md` with the owner/team. Retain suitable conventions
+and resolve placeholders needed for the first slice. Record agreed choices there;
+clarify unresolved conventions before relying on them. Link to its rules rather
+than copying them elsewhere.
 
-- structure (src/, tests/, docs/)
-- dependency files
-- existing code and tests
+## 5. Cleanup with user confirmation
 
-Identify the authoritative brief, requirements, models and other supplied inputs.
-Link them from `docs/PROJECT.md` under Resources, noting their scope and version
-where relevant. Distinguish agreed requirements from proposals and assumptions;
-resolve conflicts that affect the first slice before implementing that behavior.
-Do not treat a newer working draft as authoritative solely because of its date.
+Identify unused files, irrelevant boilerplate and mismatched structure. Obtain
+confirmation before cleanup or removal.
 
----
+- Replace template instructions in project documents with project content rather
+  than deleting the documents.
+- Replace or remove template identity: README badges (AI-SDLC, DOI, arXiv),
+  `MAINTAINING.md`, `CITATION.cff`, `.zenodo.json` and the template owner in
+  `.github/CODEOWNERS`.
+- Remove `docs/future/`, which contains template roadmap notes.
+- Rewrite `README.md`: app purpose and run instructions first, then a short
+  AI-SDLC development section linking `CONTRIBUTING.md`, `docs/specs/` and `docs/adr/`.
+- Preserve `LICENSE` section 1 and its CC BY 4.0 attribution. Ask the team for its
+  application licence and complete section 2.
 
-### 2. Align structure (minimal changes)
+## Completion evidence
 
-Ensure Clean Architecture:
-
-src/app/domain  
-src/app/application  
-src/app/interfaces  
-src/app/infrastructure  
-
-tests/unit  
-tests/integration  
-tests/e2e  
-
-Rules:
-
-- the template ships this skeleton with `__init__.py` files (needed for test
-  discovery) and `tests/unit/test_architecture.py`, which enforces the
-  dependency rule; create only what is missing
-- reuse existing structure if compatible
-- do not duplicate or restructure unnecessarily
-
----
-
-### 3. Dependencies
-
-Check for:
-
-requirements.txt  
-pyproject.toml  
-
-Rules:
-
-- reuse if present
-- create minimal file only if missing
-
-The template ships a **Python + FastAPI default profile**: the devcontainer
-image, `environments/python/`, `scripts/setup-python.sh` and the Python block
-in `.gitignore`. Setup copies the profile's `requirements.txt`,
-`.python-version` and `.vscode/launch.json` to the root.
-
-Keep the profile; adjust `requirements.txt` to the chosen framework and commit
-the copied root files. A non-Python project is outside this template's scope
-(ADR-000); stop and ask the user.
-
----
-
-### 4. Documentation
-
-Ensure:
-
-docs/PROJECT.md
-
-Rules:
-
-- update if exists
-- create minimal version if missing
-
-Content:
-
-- purpose
-- architecture
-- structure
-- resources (where non-code material lives; link reference documents)
-- commands
-- dependencies
-
----
-
-### 5. Cleanup (only with user confirmation)
-
-Identify:
-
-- unused files
-- irrelevant boilerplate
-- mismatching structure
-- template-only meta commentary that no longer applies once the project is
-  established (e.g. `docs/PROJECT.md`'s "Complete this document during
-  BOOTSTRAP" instruction line, README's template setup/"Create a project"
-  steps) — replace with the real project's own content instead of removing
-  the file
-- template identity: README badges (AI-SDLC, DOI, arXiv), `MAINTAINING.md`, `CITATION.cff`,
-  `.zenodo.json` and the owner in `.github/CODEOWNERS` describe the template,
-  not the derived project — replace or remove them for the project
-- `docs/future/`: roadmap notes for the template itself, not the project —
-  remove them
-- `README.md`: rewrite it for the project: what the app does and how to run
-  it first, then a short "How this project was developed (AI-SDLC)" section
-  linking `CONTRIBUTING.md`, `docs/specs/` and `docs/adr/`
-- `LICENSE`: keep section 1 (CC BY 4.0 requires the template attribution to
-  stay); ask the team which licence their own code uses and fill in section 2
-
-Ask the user before removing anything.
-
----
-
-## Evidence to provide
-
-- clarified objective
-- constraints
-- assumptions
-- smallest proposed slice
-- open questions
-
----
-
-## Output
-
-Repository aligned with intended system.
-
-Record phase 0 and status in `docs/TASKS.md` per `AGENTS.md`.
-
----
+Report the clarified objective, constraints, assumptions, smallest proposed slice
+and open questions. State whether the repository is aligned with the intended
+system. Record phase 0 and status in `docs/TASKS.md` per `AGENTS.md`.
