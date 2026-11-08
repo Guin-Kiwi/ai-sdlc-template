@@ -74,6 +74,11 @@ For a user-facing outcome, identify the complete journey and how it will be
 demonstrated, including dependencies on other slices. Choose automated or manual
 evidence as appropriate; record a deferred or incomplete journey explicitly.
 
+Link the source requirements from the UC and connect acceptance criteria to their
+validation evidence. When implementing an external rule table, formula or model,
+identify its authoritative version and how implementation consistency will be
+checked. Keep unresolved policy choices explicit rather than inventing defaults.
+
 Do not add unnecessary text. Write "none" for sections that don't apply.
 
 ---

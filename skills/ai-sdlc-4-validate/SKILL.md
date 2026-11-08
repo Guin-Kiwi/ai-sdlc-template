@@ -53,6 +53,25 @@ not replace the journey evidence specified above.
 
 ---
 
+### Evaluate runtime AI when applicable
+
+If the application uses an AI model at runtime, follow the active UC's declared
+evaluation plan as well as its software tests. Tests with a model substitute
+verify application behavior; they do not establish the live model's quality.
+
+Record the model and prompt versions or identifiers, input/reference provenance,
+expected-outcome basis, actual results and limitations. Keep evaluation labels
+out of model inputs unless the experiment deliberately requires them. Distinguish
+live runs, synthetic scenarios and recorded replays. Assess model outputs and
+downstream rule execution separately so correct routing does not conceal an
+incorrect assessment. Report unrun evaluations as incomplete.
+
+Run external calls within the project's agreed access and usage budget; ordinary
+CI need not make paid model calls. This section does not apply merely because
+coding agents were used to develop the application.
+
+---
+
 ### 3. Verify the declared artifact
 
 If `docs/PROJECT.md` declares a container artifact, check:

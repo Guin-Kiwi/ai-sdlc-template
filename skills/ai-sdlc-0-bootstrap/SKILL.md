@@ -34,6 +34,12 @@ Check existing:
 - dependency files
 - existing code and tests
 
+Identify the authoritative brief, requirements, models and other supplied inputs.
+Link them from `docs/PROJECT.md` under Resources, noting their scope and version
+where relevant. Distinguish agreed requirements from proposals and assumptions;
+resolve conflicts that affect the first slice before implementing that behavior.
+Do not treat a newer working draft as authoritative solely because of its date.
+
 ---
 
 ### 2. Align structure (minimal changes)
